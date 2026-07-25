@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Game Changelog</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+
+  <div id="loadingOverlay" class="loading-overlay" hidden>
+    <div class="loading-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <h2>Chargement des changelogs</h2>
+      <p id="loadingText">Préparation…</p>
+      <div class="progress-track"><div id="loadingBar" class="progress-bar"></div></div>
+      <button id="skipLoadingBtn" type="button" class="btn ghost skip-btn">Passer / utiliser l’app</button>
+    </div>
+  </div>
+
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">GC</div>
+        <div>
+          <h1>Game Changelog</h1>
+          <p>Patch notes · favoris · bugs · statut</p>
+        </div>
+      </div>
+      <div class="search-wrap">
+        <input id="searchInput" type="search" placeholder="Rechercher un jeu sur Steam…" autocomplete="off" />
+        <div id="searchResults" class="search-results" hidden></div>
+      </div>
+      <div class="top-actions">
+        <label class="filter-toggle">
+          <input id="patchOnlyToggle" type="checkbox" />
+          <span>Patch notes</span>
+        </label>
+        <label class="filter-toggle">
+          <input id="favoritesOnlyToggle" type="checkbox" />
+          <span>Favoris seul.</span>
+        </label>
+        <button id="syncLibraryBtn" type="button" class="btn ghost">Sync Steam</button>
+        <button id="refreshBtn" type="button" class="btn accent">Actualiser</button>
+      </div>
+    </header>
+
+    <nav class="tabs" aria-label="Sections">
+      <button type="button" class="tab active" data-tab="feed">Mises à jour</button>
+      <button type="button" class="tab" data-tab="bugs">Bugs</button>
+      <button type="button" class="tab" data-tab="status">Statut / Downdetector</button>
+    </nav>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-head">
+          <h2>Mes jeux</h2>
+          <span id="gameCount" class="pill">0</span>
+        </div>
+        <div id="watchlist" class="watchlist">
+          <p class="empty-hint">Recherchez un jeu pour commencer.</p>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section id="panelFeed" class="tab-panel active">
+          <div class="split">
+            <div class="feed-panel">
+              <div class="panel-head">
+                <h2>Fil des mises à jour</h2>
+                <div class="panel-head-right">
+                  <span id="lastSync" class="muted">Sync —</span>
+                  <span id="feedCount" class="muted">0 entrées</span>
+                </div>
+              </div>
+              <div id="feedList" class="feed-list">
+                <p class="empty-hint">Ajoutez des jeux à votre liste pour voir leurs changelogs.</p>
+              </div>
+            </div>
+            <div class="detail-panel">
+              <div class="panel-head"><h2>Détail</h2></div>
+              <div id="detailEmpty" class="detail-empty">
+                <p>Sélectionnez une mise à jour pour lire le changelog complet.</p>
+              </div>
+              <article id="detailView" class="detail-view" hidden>
+                <div class="detail-meta">
+                  <img id="detailIcon" alt="" />
+                  <div>
+                    <p id="detailGame" class="detail-game"></p>
+                    <h3 id="detailTitle"></h3>
+                    <p id="detailDate" class="muted"></p>
+                  </div>
+                </div>
+                <div class="detail-actions">
+                  <span id="detailSource" class="badge"></span>
+                  <div class="detail-links">
+                    <button id="openSteamBtn" type="button" class="btn ghost">Ouvrir sur Steam</button>
+                    <button id="openSteamDbBtn" type="button" class="btn ghost">Voir sur SteamDB</button>
+                  </div>
+                </div>
+                <div id="detailContent" class="detail-content"></div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <section id="panelBugs" class="tab-panel" hidden>
+          <div class="bugs-layout">
+            <div class="bugs-form-panel">
+              <div class="panel-head"><h2>Nouveau rapport de bug</h2></div>
+              <p class="muted" id="bugGameHint">Sélectionnez un jeu dans la sidebar.</p>
+              <label class="field">
+                <span>Titre</span>
+                <input id="bugTitle" type="text" placeholder="Ex. Crash au lancement après patch…" />
+              </label>
+              <label class="field">
+                <span>Notes</span>
+                <textarea id="bugBody" rows="5" placeholder="Étapes, version, détails…"></textarea>
+              </label>
+              <div class="btn-row">
+                <button id="addBugBtn" type="button" class="btn accent">Ajouter</button>
+                <button id="openBugForumBtn" type="button" class="btn ghost">Discussions Steam</button>
+              </div>
+            </div>
+            <div class="bugs-list-panel">
+              <div class="panel-head">
+                <h2>Bugs suivis</h2>
+                <span id="bugCount" class="muted">0</span>
+              </div>
+              <div id="bugsList" class="bugs-list">
+                <p class="empty-hint">Aucun bug enregistré.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="panelStatus" class="tab-panel" hidden>
+          <div class="status-layout">
+            <div class="status-steam-panel">
+              <div class="panel-head">
+                <h2>Services Steam</h2>
+                <button id="refreshStatusBtn" type="button" class="btn ghost">Relancer le check</button>
+              </div>
+              <p id="statusOverall" class="status-overall muted">—</p>
+              <div id="steamServices" class="status-grid"></div>
+              <div class="btn-row" style="margin-top:14px">
+                <button id="openSteamStatusBtn" type="button" class="btn ghost">steamstat.us</button>
+                <button id="openDdSteamBtn" type="button" class="btn ghost">Downdetector Steam</button>
+              </div>
+            </div>
+            <div class="status-games-panel">
+              <div class="panel-head">
+                <h2>Statut par jeu</h2>
+                <span class="muted">Pages connues · sinon Steam (évite les 404)</span>
+              </div>
+              <div id="gameStatusList" class="game-status-list">
+                <p class="empty-hint">Chargez vos jeux pour voir les liens de statut.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
