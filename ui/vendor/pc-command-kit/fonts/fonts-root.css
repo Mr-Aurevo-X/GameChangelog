@@ -1,0 +1,11 @@
+@import url("./fonts/fonts.css");
+
+:root {
+  --font-ui: "Outfit", "Trebuchet MS", "Gill Sans", sans-serif;
+  --font-display: "Outfit", "Trebuchet MS", "Gill Sans", sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+}
+
+body {
+  font-family: var(--font-ui);
+}

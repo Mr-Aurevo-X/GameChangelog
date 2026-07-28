@@ -1,0 +1,103 @@
+/* Settings theme panel — PC Command kit */
+.pcd-settings {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 1.2rem 2rem;
+  display: grid;
+  gap: 1rem;
+}
+.pcd-settings h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  letter-spacing: .04em;
+}
+.pcd-settings .hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: .82rem;
+}
+.preset-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.preset-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 10px;
+  padding: .55rem .85rem;
+  font-weight: 600;
+  font-size: .8rem;
+  cursor: pointer;
+  font-family: var(--font-ui, "Outfit", "Trebuchet MS", sans-serif);
+}
+.preset-btn.on {
+  border-color: var(--accent);
+  box-shadow: var(--glow-red);
+  background: var(--accent-soft);
+}
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: .65rem;
+}
+.color-field {
+  display: grid;
+  gap: .25rem;
+  font-size: .72rem;
+  color: var(--muted);
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+.color-field input[type="color"] {
+  width: 100%;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  padding: 0;
+  cursor: pointer;
+}
+.pcd-settings .actions {
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.pcd-btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: .5rem .9rem;
+  font-weight: 600;
+  font-size: .82rem;
+  cursor: pointer;
+  font-family: var(--font-ui, "Outfit", "Trebuchet MS", sans-serif);
+}
+.pcd-btn.primary {
+  background: linear-gradient(145deg, color-mix(in srgb, var(--accent) 65%, #fff), var(--accent));
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--glow-red);
+}
+.pcd-btn.ghost { background: transparent; }
+
+/* Language / skill selects match kit chrome */
+.pcd-settings select,
+.pcd-select {
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--line));
+  background-color: var(--panel);
+  color: var(--text);
+  padding: .55rem 2rem .55rem .85rem;
+  font-size: .82rem;
+  font-weight: 600;
+  font-family: var(--font-ui, "Outfit", "Trebuchet MS", sans-serif);
+  box-shadow: var(--glow-red);
+  cursor: pointer;
+}

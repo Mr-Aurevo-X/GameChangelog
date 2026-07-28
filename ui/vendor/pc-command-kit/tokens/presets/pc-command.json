@@ -1,0 +1,14 @@
+{
+  "preset": "pc-command",
+  "bg": "#06070c",
+  "panel": "#0e1118",
+  "panel2": "#12161f",
+  "text": "#eef2f8",
+  "muted": "#8490a6",
+  "accent": "#e03545",
+  "cyan": "#3ec7ff",
+  "ok": "#3dd68c",
+  "warn": "#f0a33a",
+  "glowAccent": "0 0 18px rgba(224, 53, 69, .28)",
+  "glowCyan": "0 0 16px rgba(62, 199, 255, .22)"
+}

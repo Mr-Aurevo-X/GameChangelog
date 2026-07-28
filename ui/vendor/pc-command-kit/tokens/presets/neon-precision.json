@@ -1,0 +1,14 @@
+{
+  "preset": "neon-precision",
+  "bg": "#04060a",
+  "panel": "#0a0e16",
+  "panel2": "#0f1420",
+  "text": "#f0f6ff",
+  "muted": "#7a8aa3",
+  "accent": "#e03545",
+  "cyan": "#2ee0ff",
+  "ok": "#2dff9a",
+  "warn": "#ffb020",
+  "glowAccent": "0 0 22px rgba(224, 53, 69, .4)",
+  "glowCyan": "0 0 20px rgba(46, 224, 255, .35)"
+}

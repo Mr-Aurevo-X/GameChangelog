@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "atelier-theme.json",
+  "title": "Atelier / PC Command theme",
+  "type": "object",
+  "properties": {
+    "preset": {
+      "type": "string",
+      "enum": ["pc-command", "soft-glass", "neon-precision", "graphite-minimal", "amber-ops", "custom"]
+    },
+    "bg": { "type": "string" },
+    "panel": { "type": "string" },
+    "panel2": { "type": "string" },
+    "text": { "type": "string" },
+    "muted": { "type": "string" },
+    "accent": { "type": "string" },
+    "cyan": { "type": "string" },
+    "ok": { "type": "string" },
+    "warn": { "type": "string" },
+    "glowAccent": { "type": "string" },
+    "glowCyan": { "type": "string" }
+  },
+  "required": ["preset"]
+}

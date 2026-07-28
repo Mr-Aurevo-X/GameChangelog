@@ -1,0 +1,14 @@
+{
+  "preset": "amber-ops",
+  "bg": "#0a0907",
+  "panel": "#15120e",
+  "panel2": "#1c1812",
+  "text": "#f4efe6",
+  "muted": "#9a8f7c",
+  "accent": "#e03545",
+  "cyan": "#e8a54b",
+  "ok": "#5cbc7a",
+  "warn": "#f0b429",
+  "glowAccent": "0 0 16px rgba(224, 53, 69, .26)",
+  "glowCyan": "0 0 14px rgba(232, 165, 75, .22)"
+}

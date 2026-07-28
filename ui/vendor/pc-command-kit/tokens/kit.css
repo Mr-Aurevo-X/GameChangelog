@@ -1,0 +1,72 @@
+@import url("../fonts/kit-fonts.css");
+@import url("base.css");
+@import url("reset.css");
+
+/* Applied when html[data-preset] or .theme-* is set */
+html[data-preset="soft-glass"],
+body.theme-soft-glass {
+  --bg: #0a0c12;
+  --panel: #141820;
+  --panel2: #1a1f2a;
+  --text: #f2f4f8;
+  --muted: #8b95a8;
+  --accent: #e04555;
+  --accent-soft: rgba(224, 69, 85, .12);
+  --cyan: #5ec8e8;
+  --cyan-soft: rgba(94, 200, 232, .1);
+  --ok: #4ade98;
+  --warn: #e8b04a;
+  --glow-red: 0 0 12px rgba(224, 69, 85, .18);
+  --glow-cyan: 0 0 10px rgba(94, 200, 232, .14);
+}
+
+html[data-preset="neon-precision"],
+body.theme-neon-precision {
+  --bg: #04060a;
+  --panel: #0a0e16;
+  --panel2: #0f1420;
+  --text: #f0f6ff;
+  --muted: #7a8aa3;
+  --accent: #e03545;
+  --accent-soft: rgba(224, 53, 69, .16);
+  --cyan: #2ee0ff;
+  --cyan-soft: rgba(46, 224, 255, .14);
+  --ok: #2dff9a;
+  --warn: #ffb020;
+  --glow-red: 0 0 22px rgba(224, 53, 69, .4);
+  --glow-cyan: 0 0 20px rgba(46, 224, 255, .35);
+}
+
+html[data-preset="graphite-minimal"],
+body.theme-graphite-minimal {
+  --bg: #0b0d10;
+  --panel: #14171c;
+  --panel2: #1a1e24;
+  --text: #e8eaed;
+  --muted: #8a919c;
+  --accent: #d94856;
+  --accent-soft: rgba(217, 72, 86, .1);
+  --cyan: #7a8799;
+  --cyan-soft: rgba(122, 135, 153, .08);
+  --ok: #4caf82;
+  --warn: #c9a227;
+  --glow-red: 0 0 10px rgba(217, 72, 86, .16);
+  --glow-cyan: 0 0 8px rgba(122, 135, 153, .1);
+}
+
+html[data-preset="amber-ops"],
+body.theme-amber-ops {
+  --bg: #0a0907;
+  --panel: #15120e;
+  --panel2: #1c1812;
+  --text: #f4efe6;
+  --muted: #9a8f7c;
+  --accent: #e03545;
+  --accent-soft: rgba(224, 53, 69, .14);
+  --cyan: #e8a54b;
+  --cyan-soft: rgba(232, 165, 75, .12);
+  --ok: #5cbc7a;
+  --warn: #f0b429;
+  --glow-red: 0 0 16px rgba(224, 53, 69, .26);
+  --glow-cyan: 0 0 14px rgba(232, 165, 75, .22);
+}

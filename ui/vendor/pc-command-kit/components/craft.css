@@ -1,0 +1,95 @@
+/* Premium craft from Pinterest refs (JB Eudeline / cyber dash / FUI) —
+   brand-adapted: accent #e03545, NO purple, glow discreet but readable */
+
+:root {
+  --craft-bg0: #0a0b10;
+  --craft-bg1: #12131a;
+  --craft-bg2: #181a24;
+  --craft-text: #f3f4f8;
+  --craft-muted: #8b93a7;
+  --craft-accent: #e03545;
+  --craft-cyan: #3ec7ff;
+  --craft-ok: #3dd68c;
+  --craft-warn: #f0a33a;
+  --craft-border: rgba(255,255,255,0.08);
+  --craft-glow: 0 0 24px rgba(224,53,69,0.28);
+  --craft-elev:
+    0 1px 0 rgba(255,255,255,0.06) inset,
+    0 10px 28px rgba(0,0,0,0.45),
+    0 2px 6px rgba(0,0,0,0.35);
+}
+
+body {
+  background: var(--craft-bg0);
+  color: var(--craft-text);
+  font-family: var(--font-ui);
+}
+
+.gauge {
+  width: 88px; height: 88px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, #151722 58%, transparent 59%),
+    conic-gradient(var(--craft-accent) var(--p, 72%), rgba(255,255,255,0.08) 0);
+  display: grid; place-items: center;
+  box-shadow: var(--craft-glow);
+  position: relative;
+}
+.gauge span {
+  font-weight: 700; font-size: 1.05rem; letter-spacing: -0.02em;
+}
+.gauge.sm { width: 56px; height: 56px; }
+.gauge.sm span { font-size: 0.78rem; }
+.gauge.ok {
+  background:
+    radial-gradient(circle at 50% 50%, #151722 58%, transparent 59%),
+    conic-gradient(var(--craft-ok) var(--p, 90%), rgba(255,255,255,0.08) 0);
+  box-shadow: 0 0 20px rgba(61,214,140,0.22);
+}
+
+.spark {
+  height: 42px; width: 100%;
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(224,53,69,0.22), transparent 70%),
+    repeating-linear-gradient(90deg, transparent 0 10px, rgba(255,255,255,0.03) 10px 11px);
+  position: relative; overflow: hidden;
+}
+.spark::after {
+  content: "";
+  position: absolute; inset: auto 0 8px 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--craft-accent), var(--craft-cyan), transparent);
+  box-shadow: 0 0 12px rgba(224,53,69,0.55);
+  clip-path: polygon(0 100%, 8% 60%, 18% 75%, 28% 40%, 40% 55%, 52% 20%, 64% 45%, 76% 30%, 88% 50%, 100% 35%, 100% 100%, 0 100%);
+  height: 28px; bottom: 0;
+}
+
+.kpi {
+  display: flex; flex-direction: column; gap: 0.15rem;
+}
+.kpi b { font-size: 1.45rem; letter-spacing: -0.03em; }
+.kpi small { color: var(--craft-muted); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.06em; }
+.kpi .up { color: var(--craft-ok); font-size: 0.78rem; font-weight: 600; }
+.kpi .down { color: var(--craft-accent); font-size: 0.78rem; font-weight: 600; }
+
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--craft-ok);
+  box-shadow: 0 0 10px rgba(61,214,140,0.55);
+  display: inline-block;
+}
+.dot.warn { background: var(--craft-warn); box-shadow: 0 0 10px rgba(240,163,58,0.5); }
+.dot.bad { background: var(--craft-accent); box-shadow: 0 0 10px rgba(224,53,69,0.55); }
+
+.bar-row {
+  display: grid; grid-template-columns: 72px 1fr 36px; gap: 0.5rem; align-items: center;
+  font-size: 0.78rem; color: var(--craft-muted); margin-bottom: 0.45rem;
+}
+.bar-track {
+  height: 7px; border-radius: 999px; background: rgba(255,255,255,0.06); overflow: hidden;
+}
+.bar-fill {
+  height: 100%; border-radius: inherit;
+  background: linear-gradient(90deg, var(--craft-accent), #ff6b78);
+  box-shadow: 0 0 10px rgba(224,53,69,0.35);
+}

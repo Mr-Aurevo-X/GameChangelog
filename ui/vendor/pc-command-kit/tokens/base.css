@@ -1,0 +1,26 @@
+/* PC Command kit — design tokens (default = pc-command preset) */
+:root {
+  --bg: #06070c;
+  --panel: #0e1118;
+  --panel2: #12161f;
+  --text: #eef2f8;
+  --muted: #8490a6;
+  --accent: #e03545;
+  --accent-soft: rgba(224, 53, 69, .14);
+  --cyan: #3ec7ff;
+  --cyan-soft: rgba(62, 199, 255, .12);
+  --ok: #3dd68c;
+  --ok-soft: rgba(61, 214, 140, .12);
+  --warn: #f0a33a;
+  --warn-soft: rgba(240, 163, 58, .14);
+  --line: rgba(255, 255, 255, .08);
+  --glow-red: 0 0 18px rgba(224, 53, 69, .28);
+  --glow-cyan: 0 0 16px rgba(62, 199, 255, .22);
+  --glow-amber: 0 0 16px rgba(240, 163, 58, .22);
+  --glow-green: 0 0 14px rgba(61, 214, 140, .2);
+  --font-ui: "Outfit", "Trebuchet MS", "Gill Sans", sans-serif;
+  --font-display: "Outfit", "Trebuchet MS", "Gill Sans", sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+  --radius: 14px;
+  --radius-sm: 8px;
+}

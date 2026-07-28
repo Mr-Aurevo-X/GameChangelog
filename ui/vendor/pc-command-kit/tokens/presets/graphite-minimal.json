@@ -1,0 +1,14 @@
+{
+  "preset": "graphite-minimal",
+  "bg": "#0b0d10",
+  "panel": "#14171c",
+  "panel2": "#1a1e24",
+  "text": "#e8eaed",
+  "muted": "#8a919c",
+  "accent": "#d94856",
+  "cyan": "#7a8799",
+  "ok": "#4caf82",
+  "warn": "#c9a227",
+  "glowAccent": "0 0 10px rgba(217, 72, 86, .16)",
+  "glowCyan": "0 0 8px rgba(122, 135, 153, .1)"
+}

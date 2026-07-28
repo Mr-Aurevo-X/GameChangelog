@@ -1,0 +1,14 @@
+{
+  "preset": "soft-glass",
+  "bg": "#0a0c12",
+  "panel": "#141820",
+  "panel2": "#1a1f2a",
+  "text": "#f2f4f8",
+  "muted": "#8b95a8",
+  "accent": "#e04555",
+  "cyan": "#5ec8e8",
+  "ok": "#4ade98",
+  "warn": "#e8b04a",
+  "glowAccent": "0 0 12px rgba(224, 69, 85, .18)",
+  "glowCyan": "0 0 10px rgba(94, 200, 232, .14)"
+}

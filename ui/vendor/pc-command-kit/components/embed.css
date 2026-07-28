@@ -1,0 +1,76 @@
+/* Embed mode — hide duplicate chrome when ?embed=1 (in-hub module iframe).
+ *
+ * Critical: suite tools use `.shell { display:grid; grid-template-columns: var(--sidebar) 1fr }`.
+ * Hiding `.sidebar` alone leaves the first 220px track for `.main` → crushed left column +
+ * empty black right. Force a single-column / flex full-bleed layout instead.
+ */
+
+html.pcd-embed,
+html.pcd-embed body,
+body.pcd-embed {
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+body.pcd-embed .app-sidebar,
+body.pcd-embed .sidebar,
+body.pcd-embed aside.side,
+body.pcd-embed aside.sidebar,
+body.pcd-embed .titlebar,
+body.pcd-embed .window-chrome,
+body.pcd-embed .pcd-nav {
+  display: none !important;
+}
+
+/* Drop duplicate in-app title when hub module chrome already shows the name */
+body.pcd-embed .page-header h1,
+body.pcd-embed .page-header h2,
+body.pcd-embed .app-hero h1 {
+  display: none !important;
+}
+
+body.pcd-embed .page-header {
+  margin-bottom: 0.65rem !important;
+}
+
+body.pcd-embed .shell,
+body.pcd-embed .layout,
+body.pcd-embed .app-wrap,
+body.pcd-embed .app-shell {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+  grid-template-rows: none !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  min-height: 100vh !important;
+  margin: 0 !important;
+  gap: 0 !important;
+}
+
+body.pcd-embed .main,
+body.pcd-embed main,
+body.pcd-embed .content,
+body.pcd-embed .hub-main,
+body.pcd-embed .app-main,
+body.pcd-embed .workspace {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  overflow: auto !important;
+}
+
+body.pcd-embed .bg {
+  position: fixed !important;
+  inset: 0 !important;
+}

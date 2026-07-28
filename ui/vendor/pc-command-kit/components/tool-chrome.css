@@ -1,0 +1,152 @@
+/* Standalone tool windows — custom frameless chrome (no OS caption).
+ * Drag/resize via js_api window_start_drag / window_start_resize only.
+ * Do NOT pair with Win32 WndProc NCHITTEST subclass (black-screen risk).
+ */
+
+:root {
+  --tool-titlebar-h: 40px;
+}
+
+html {
+  height: 100%;
+}
+
+body.frameless:not(.pcd-embed) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Title bar stays pinned; shell scrolls underneath (never scrolls away). */
+.tool-titlebar {
+  display: none;
+  position: sticky;
+  top: 0;
+  flex: 0 0 var(--tool-titlebar-h);
+  height: var(--tool-titlebar-h);
+  align-items: center;
+  gap: .75rem;
+  padding: 0 .55rem 0 .9rem;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  background: rgba(10, 12, 18, .96);
+  backdrop-filter: blur(12px);
+  user-select: none;
+  z-index: 50;
+  box-sizing: border-box;
+}
+
+body.frameless:not(.pcd-embed) .tool-titlebar {
+  display: flex;
+}
+
+/* Win over app styles.css `.shell { height: 100vh }` which would clip under titlebar. */
+body.frameless:not(.pcd-embed) .shell,
+body.frameless:not(.pcd-embed) .app-shell {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: hidden;
+}
+
+/* Sidebar scrolls so footer/CGU remain reachable when viewport is short. */
+body.frameless:not(.pcd-embed) .shell .sidebar,
+body.frameless:not(.pcd-embed) aside.sidebar,
+body.frameless:not(.pcd-embed) .app-sidebar {
+  overflow-x: hidden;
+  overflow-y: auto;
+  min-height: 0;
+  max-height: 100%;
+  -webkit-overflow-scrolling: touch;
+}
+
+body.pcd-embed .tool-titlebar,
+body.pcd-embed .tool-resize-edges {
+  display: none !important;
+}
+
+.tool-titlebar .tool-title {
+  flex: 1;
+  min-width: 0;
+  font-size: .82rem;
+  font-weight: 650;
+  letter-spacing: .02em;
+  color: #eef2f8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+}
+
+.tool-titlebar .tool-title em {
+  font-style: normal;
+  color: #8490a6;
+  font-weight: 500;
+  margin-left: .35rem;
+}
+
+.tool-titlebar .win-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.tool-titlebar .win-btn {
+  width: 38px;
+  height: 28px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #8490a6;
+  font-size: .95rem;
+  line-height: 1;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background .12s ease, color .12s ease;
+}
+
+.tool-titlebar .win-btn:hover {
+  background: rgba(255, 255, 255, .08);
+  color: #fff;
+}
+
+.tool-titlebar .win-btn.win-close:hover {
+  background: #e03545;
+  color: #fff;
+  box-shadow: 0 0 14px rgba(224, 53, 69, .35);
+}
+
+/* Invisible edge grips — WebView2 ignores CSS app-region */
+.tool-resize-edges {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100000;
+}
+
+body.frameless:not(.pcd-embed) .tool-resize-edge {
+  position: absolute;
+  pointer-events: auto;
+  background: transparent;
+}
+
+body:not(.frameless) .tool-resize-edges,
+body.pcd-embed .tool-resize-edges {
+  display: none;
+}
+
+.tool-resize-edge.n { top: 0; left: 10px; right: 10px; height: 8px; cursor: ns-resize; }
+.tool-resize-edge.s { bottom: 0; left: 10px; right: 10px; height: 8px; cursor: ns-resize; }
+.tool-resize-edge.e { top: 10px; right: 0; bottom: 10px; width: 8px; cursor: ew-resize; }
+.tool-resize-edge.w { top: 10px; left: 0; bottom: 10px; width: 8px; cursor: ew-resize; }
+.tool-resize-edge.nw { top: 0; left: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.tool-resize-edge.ne { top: 0; right: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.tool-resize-edge.sw { bottom: 0; left: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.tool-resize-edge.se { bottom: 0; right: 0; width: 12px; height: 12px; cursor: nwse-resize; }
