@@ -1,49 +1,21 @@
-/* Apply atelier-theme.json tokens onto :root */
+﻿/* Apply atelier-theme.json tokens onto :root */
 (function (global) {
   const KEYS = ["bg", "panel", "panel2", "text", "muted", "accent", "cyan", "ok", "warn"];
 
   const PRESETS = {
-    "pc-command": {
-      preset: "pc-command",
-      bg: "#06070c",
-      panel: "#0e1118",
-      panel2: "#12161f",
-      text: "#eef2f8",
-      muted: "#8490a6",
+    "amber-ops": {
+      preset: "amber-ops",
+      bg: "#0a0907",
+      panel: "#15120e",
+      panel2: "#1c1812",
+      text: "#f4efe6",
+      muted: "#9a8f7c",
       accent: "#e03545",
-      cyan: "#3ec7ff",
-      ok: "#3dd68c",
-      warn: "#f0a33a",
-      glowAccent: "0 0 18px rgba(224, 53, 69, .28)",
-      glowCyan: "0 0 16px rgba(62, 199, 255, .22)",
-    },
-    "soft-glass": {
-      preset: "soft-glass",
-      bg: "#0a0c12",
-      panel: "#141820",
-      panel2: "#1a1f2a",
-      text: "#f2f4f8",
-      muted: "#8b95a8",
-      accent: "#e04555",
-      cyan: "#5ec8e8",
-      ok: "#4ade98",
-      warn: "#e8b04a",
-      glowAccent: "0 0 12px rgba(224, 69, 85, .18)",
-      glowCyan: "0 0 10px rgba(94, 200, 232, .14)",
-    },
-    "neon-precision": {
-      preset: "neon-precision",
-      bg: "#04060a",
-      panel: "#0a0e16",
-      panel2: "#0f1420",
-      text: "#f0f6ff",
-      muted: "#7a8aa3",
-      accent: "#e03545",
-      cyan: "#2ee0ff",
-      ok: "#2dff9a",
-      warn: "#ffb020",
-      glowAccent: "0 0 22px rgba(224, 53, 69, .4)",
-      glowCyan: "0 0 20px rgba(46, 224, 255, .35)",
+      cyan: "#e8a54b",
+      ok: "#5cbc7a",
+      warn: "#f0b429",
+      glowAccent: "0 0 16px rgba(224, 53, 69, .26)",
+      glowCyan: "0 0 14px rgba(232, 165, 75, .22)"
     },
     "graphite-minimal": {
       preset: "graphite-minimal",
@@ -57,22 +29,50 @@
       ok: "#4caf82",
       warn: "#c9a227",
       glowAccent: "0 0 10px rgba(217, 72, 86, .16)",
-      glowCyan: "0 0 8px rgba(122, 135, 153, .1)",
+      glowCyan: "0 0 8px rgba(122, 135, 153, .1)"
     },
-    "amber-ops": {
-      preset: "amber-ops",
-      bg: "#0a0907",
-      panel: "#15120e",
-      panel2: "#1c1812",
-      text: "#f4efe6",
-      muted: "#9a8f7c",
+    "neon-precision": {
+      preset: "neon-precision",
+      bg: "#04060a",
+      panel: "#0a0e16",
+      panel2: "#0f1420",
+      text: "#f0f6ff",
+      muted: "#7a8aa3",
       accent: "#e03545",
-      cyan: "#e8a54b",
-      ok: "#5cbc7a",
-      warn: "#f0b429",
-      glowAccent: "0 0 16px rgba(224, 53, 69, .26)",
-      glowCyan: "0 0 14px rgba(232, 165, 75, .22)",
+      cyan: "#2ee0ff",
+      ok: "#2dff9a",
+      warn: "#ffb020",
+      glowAccent: "0 0 22px rgba(224, 53, 69, .4)",
+      glowCyan: "0 0 20px rgba(46, 224, 255, .35)"
     },
+    "pc-command": {
+      preset: "pc-command",
+      bg: "#06070c",
+      panel: "#0e1118",
+      panel2: "#12161f",
+      text: "#eef2f8",
+      muted: "#8490a6",
+      accent: "#e03545",
+      cyan: "#3ec7ff",
+      ok: "#3dd68c",
+      warn: "#f0a33a",
+      glowAccent: "0 0 18px rgba(224, 53, 69, .28)",
+      glowCyan: "0 0 16px rgba(62, 199, 255, .22)"
+    },
+    "soft-glass": {
+      preset: "soft-glass",
+      bg: "#0a0c12",
+      panel: "#141820",
+      panel2: "#1a1f2a",
+      text: "#f2f4f8",
+      muted: "#8b95a8",
+      accent: "#e04555",
+      cyan: "#5ec8e8",
+      ok: "#4ade98",
+      warn: "#e8b04a",
+      glowAccent: "0 0 12px rgba(224, 69, 85, .18)",
+      glowCyan: "0 0 10px rgba(94, 200, 232, .14)"
+    }
   };
 
   function hexToRgb(hex) {

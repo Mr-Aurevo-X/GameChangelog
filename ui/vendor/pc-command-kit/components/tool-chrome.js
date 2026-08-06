@@ -1,11 +1,19 @@
 /**
  * Standalone tool frameless chrome — inject title bar + wire drag/resize.
  * Requires pywebview js_api: window_start_drag, window_start_resize,
- * window_minimize, window_toggle_maximize, window_close.
+ * get_window_bounds, set_window_bounds, window_minimize, window_toggle_maximize,
+ * window_close.
  * Skips when ?embed=1 / body.pcd-embed (in-hub iframe).
+ *
+ * Resize prefers pointer-driven SetWindowPos (async-bridge safe). WM_NCLBUTTONDOWN
+ * alone fails on FormBorderStyle.None / delayed bridge — same as PC Command hub.
  */
 (function () {
   "use strict";
+
+  // Match HostHelpers TOOL_MIN_SIZE; host also clamps via set_window_bounds.
+  const MIN_W = 1200;
+  const MIN_H = 780;
 
   function isEmbed() {
     try {
@@ -48,8 +56,15 @@
     const titleEl = document.getElementById("toolTitleText");
     if (titleEl && !titleEl.dataset.locked) {
       const name = toolLabel();
-      titleEl.innerHTML =
-        name + ' <em>L\'Atelier PC Command</em>';
+      const sub =
+        ((document.body && document.body.getAttribute("data-tool-subtitle")) || "").trim() ||
+        "L'Atelier PC Command";
+      const safeSub = String(sub)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+      titleEl.innerHTML = name + " <em>" + safeSub + "</em>";
     }
 
     if (!document.querySelector(".tool-resize-edges")) {
@@ -140,12 +155,94 @@
       callSync("window_start_drag");
     });
 
+    // Pointer-driven frameless resize — async js_api safe (SetWindowPos per move).
+    const applyEdgeDelta = (edge, geo, dx, dy) => {
+      let x = geo.x;
+      let y = geo.y;
+      let w = geo.w;
+      let h = geo.h;
+      if (edge === "right" || edge === "top-right" || edge === "bottom-right") w = geo.w + dx;
+      if (edge === "left" || edge === "top-left" || edge === "bottom-left") {
+        x = geo.x + dx;
+        w = geo.w - dx;
+      }
+      if (edge === "bottom" || edge === "bottom-left" || edge === "bottom-right") h = geo.h + dy;
+      if (edge === "top" || edge === "top-left" || edge === "top-right") {
+        y = geo.y + dy;
+        h = geo.h - dy;
+      }
+      if (w < MIN_W) {
+        if (edge.includes("left")) x = geo.x + geo.w - MIN_W;
+        w = MIN_W;
+      }
+      if (h < MIN_H) {
+        if (edge.includes("top")) y = geo.y + geo.h - MIN_H;
+        h = MIN_H;
+      }
+      return { x, y, w, h };
+    };
+
+    let resizeSession = null;
+    const endResize = () => {
+      if (!resizeSession) return;
+      const s = resizeSession;
+      resizeSession = null;
+      try {
+        if (s.pointerId != null) s.el.releasePointerCapture(s.pointerId);
+      } catch (_) {}
+      window.removeEventListener("pointermove", onResizeMove);
+      window.removeEventListener("pointerup", endResize);
+      window.removeEventListener("pointercancel", endResize);
+    };
+    const onResizeMove = (ev) => {
+      if (!resizeSession || !resizeSession.geo) return;
+      const dx = ev.screenX - resizeSession.startX;
+      const dy = ev.screenY - resizeSession.startY;
+      const next = applyEdgeDelta(resizeSession.edge, resizeSession.geo, dx, dy);
+      const api = apiRef || window.pywebview?.api;
+      if (api && typeof api.set_window_bounds === "function") {
+        try {
+          api.set_window_bounds(next.x, next.y, next.w, next.h);
+        } catch (_) {}
+      }
+    };
+
     document.querySelectorAll(".tool-resize-edge").forEach((el) => {
-      el.addEventListener("mousedown", (ev) => {
+      el.addEventListener("pointerdown", (ev) => {
         if (ev.button !== 0) return;
         ev.preventDefault();
         ev.stopPropagation();
-        callSync("window_start_resize", el.getAttribute("data-edge") || "right");
+        const edge = el.getAttribute("data-edge") || "right";
+        try {
+          el.setPointerCapture(ev.pointerId);
+        } catch (_) {}
+        resizeSession = {
+          el,
+          edge,
+          geo: null,
+          startX: ev.screenX,
+          startY: ev.screenY,
+          pointerId: ev.pointerId,
+        };
+        window.addEventListener("pointermove", onResizeMove);
+        window.addEventListener("pointerup", endResize);
+        window.addEventListener("pointercancel", endResize);
+        ensureApi()
+          .then((api) => (api && api.get_window_bounds ? api.get_window_bounds() : null))
+          .then((res) => {
+            if (!resizeSession || resizeSession.el !== el) return;
+            if (res?.ok) {
+              resizeSession.geo = { x: res.x, y: res.y, w: res.w, h: res.h };
+              return;
+            }
+            // Fallback: best-effort native HT* (needs WS_THICKFRAME)
+            callSync("window_start_resize", edge);
+            endResize();
+          })
+          .catch(() => {
+            callSync("window_start_resize", edge);
+            endResize();
+          });
       });
     });
   }

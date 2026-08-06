@@ -1,0 +1,28 @@
+﻿{
+    "version":  "1.1.6",
+    "defaultPreset":  "pc-command",
+    "colorKeys":  [
+                      "bg",
+                      "panel",
+                      "panel2",
+                      "text",
+                      "muted",
+                      "accent",
+                      "cyan",
+                      "ok",
+                      "warn"
+                  ],
+    "glowKeys":  [
+                     "glowAccent",
+                     "glowCyan"
+                 ],
+    "applyTheme":  "components/settings-panel.js applyTheme(theme, targetDoc)",
+    "presets":  [
+                    "amber-ops",
+                    "graphite-minimal",
+                    "neon-precision",
+                    "pc-command",
+                    "soft-glass"
+                ]
+}
+

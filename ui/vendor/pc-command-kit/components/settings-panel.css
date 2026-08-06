@@ -101,3 +101,13 @@
   box-shadow: var(--glow-red);
   cursor: pointer;
 }
+/* Native <select> popup: WebView2/Edge composites a translucent select
+   background to white, leaving light option text unreadable. Force opaque,
+   theme-aware colors on the option list. */
+.pcd-settings select option,
+.pcd-select option,
+select option,
+select optgroup {
+  background-color: var(--panel2, var(--panel));
+  color: var(--text);
+}

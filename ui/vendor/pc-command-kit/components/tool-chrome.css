@@ -1,5 +1,6 @@
 /* Standalone tool windows — custom frameless chrome (no OS caption).
- * Drag/resize via js_api window_start_drag / window_start_resize only.
+ * Drag via window_start_drag; resize via pointer-driven get/set_window_bounds
+ * (SetWindowPos), with window_start_resize fallback (needs WS_THICKFRAME).
  * Do NOT pair with Win32 WndProc NCHITTEST subclass (black-screen risk).
  */
 
@@ -142,11 +143,12 @@ body.pcd-embed .tool-resize-edges {
   display: none;
 }
 
-.tool-resize-edge.n { top: 0; left: 10px; right: 10px; height: 8px; cursor: ns-resize; }
-.tool-resize-edge.s { bottom: 0; left: 10px; right: 10px; height: 8px; cursor: ns-resize; }
-.tool-resize-edge.e { top: 10px; right: 0; bottom: 10px; width: 8px; cursor: ew-resize; }
-.tool-resize-edge.w { top: 10px; left: 0; bottom: 10px; width: 8px; cursor: ew-resize; }
-.tool-resize-edge.nw { top: 0; left: 0; width: 12px; height: 12px; cursor: nwse-resize; }
-.tool-resize-edge.ne { top: 0; right: 0; width: 12px; height: 12px; cursor: nesw-resize; }
-.tool-resize-edge.sw { bottom: 0; left: 0; width: 12px; height: 12px; cursor: nesw-resize; }
-.tool-resize-edge.se { bottom: 0; right: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+/* Inset grips — avoid fighting WinForms shadow / DWM outer edge. */
+.tool-resize-edge.n { top: 8px; left: 20px; right: 20px; height: 10px; cursor: ns-resize; }
+.tool-resize-edge.s { bottom: 8px; left: 20px; right: 20px; height: 10px; cursor: ns-resize; }
+.tool-resize-edge.e { top: 20px; right: 8px; bottom: 20px; width: 10px; cursor: ew-resize; }
+.tool-resize-edge.w { top: 20px; left: 8px; bottom: 20px; width: 10px; cursor: ew-resize; }
+.tool-resize-edge.nw { top: 4px; left: 4px; width: 18px; height: 18px; cursor: nwse-resize; }
+.tool-resize-edge.ne { top: 4px; right: 4px; width: 18px; height: 18px; cursor: nesw-resize; }
+.tool-resize-edge.sw { bottom: 4px; left: 4px; width: 18px; height: 18px; cursor: nesw-resize; }
+.tool-resize-edge.se { bottom: 4px; right: 4px; width: 18px; height: 18px; cursor: nwse-resize; }
