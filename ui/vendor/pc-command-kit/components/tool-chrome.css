@@ -44,9 +44,12 @@ body.frameless:not(.pcd-embed) .tool-titlebar {
   display: flex;
 }
 
-/* Win over app styles.css `.shell { height: 100vh }` which would clip under titlebar. */
+/* Win over app styles.css `.shell { height: 100vh }` which would clip under titlebar.
+ * KEEP `.shell` — standalone tools (WinAudit, WinCleaner, …) use top-level `.shell`.
+ * `.hub-shell` alone is not enough for frameless suite windows. */
 body.frameless:not(.pcd-embed) .shell,
-body.frameless:not(.pcd-embed) .app-shell {
+body.frameless:not(.pcd-embed) .app-shell,
+body.frameless:not(.pcd-embed) .hub-shell {
   flex: 1 1 auto !important;
   min-height: 0 !important;
   height: auto !important;

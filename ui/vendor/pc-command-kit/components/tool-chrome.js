@@ -56,15 +56,32 @@
     const titleEl = document.getElementById("toolTitleText");
     if (titleEl && !titleEl.dataset.locked) {
       const name = toolLabel();
+      // data-tool-subtitle="" → no subtitle (hubs use full title alone).
+      // Absent attribute → default brand for standalone tools.
+      const rawSubAttr =
+        document.body && document.body.hasAttribute("data-tool-subtitle")
+          ? document.body.getAttribute("data-tool-subtitle")
+          : null;
+      const versionAttr =
+        (document.body && document.body.getAttribute("data-tool-version")) || "";
+      const ver = String(versionAttr || "").trim();
+      let displayName = name;
+      if (ver && !/\[v?\d/i.test(name)) {
+        const norm = ver.charAt(0).toLowerCase() === "v" ? ver : "v" + ver;
+        displayName = name + " [" + norm + "]";
+      }
       const sub =
-        ((document.body && document.body.getAttribute("data-tool-subtitle")) || "").trim() ||
-        "L'Atelier PC Command";
-      const safeSub = String(sub)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;");
-      titleEl.innerHTML = name + " <em>" + safeSub + "</em>";
+        rawSubAttr === null ? "PC Command" : String(rawSubAttr || "").trim();
+      if (sub) {
+        const safeSub = String(sub)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+        titleEl.innerHTML = displayName + " <em>" + safeSub + "</em>";
+      } else {
+        titleEl.textContent = displayName;
+      }
     }
 
     if (!document.querySelector(".tool-resize-edges")) {
@@ -251,6 +268,34 @@
     if (isEmbed()) return;
     wire(ensureChrome());
   }
+
+  function setTitle(title, opts) {
+    const t = String(title || "").trim();
+    if (!t) return;
+    try {
+      document.body && document.body.setAttribute("data-tool-title", t);
+      if (opts && Object.prototype.hasOwnProperty.call(opts, "subtitle")) {
+        document.body.setAttribute("data-tool-subtitle", String(opts.subtitle || ""));
+      }
+      if (opts && opts.version != null) {
+        document.body.setAttribute("data-tool-version", String(opts.version || ""));
+      }
+      const el = document.getElementById("toolTitleText");
+      if (el) {
+        el.dataset.locked = "1";
+        el.textContent = t;
+      }
+    } catch (_) {}
+  }
+
+  window.PcToolChrome = {
+    setTitle,
+    refresh() {
+      const el = document.getElementById("toolTitleText");
+      if (el) delete el.dataset.locked;
+      ensureChrome();
+    },
+  };
 
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", boot);

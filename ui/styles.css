@@ -1,18 +1,12 @@
+/* App aliases on top of PC Command kit tokens (kit.css / base.css). */
 :root {
-  --bg: #0b0d12;
-  --panel: #121722;
-  --panel-2: #171d2b;
-  --border: rgba(255, 255, 255, 0.08);
-  --text: #eef2ff;
-  --muted: #9aa7c7;
-  --accent: #4f8cff;
-  --accent-2: #7c5cff;
+  --panel-2: var(--panel2, #12161f);
+  --border: var(--line, rgba(255, 255, 255, 0.08));
+  --accent-2: var(--cyan, #3ec7ff);
   --danger: #ff5d7a;
-  --success: #3dd68c;
-  --shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
-  --radius: 16px;
-  --radius-sm: 10px;
-  --font: "Segoe UI", system-ui, sans-serif;
+  --success: var(--ok, #3dd68c);
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  --font: var(--font-ui, "Outfit", "Trebuchet MS", sans-serif);
 }
 
 * { box-sizing: border-box; }
@@ -29,11 +23,8 @@ body {
 .bg {
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(79, 140, 255, 0.18), transparent 28%),
-    radial-gradient(circle at 85% 10%, rgba(124, 92, 255, 0.16), transparent 24%),
-    linear-gradient(180deg, #0b0d12 0%, #0d1118 100%);
   pointer-events: none;
+  /* Kit standalone.css overrides .bg gradients when not embed. */
 }
 
 .app {
@@ -42,6 +33,20 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  min-height: 0;
+}
+
+body.frameless:not(.pcd-embed) .app {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: hidden;
+}
+
+/* Product name only — hide kit Atelier subtitle if a sync restores it. */
+.tool-titlebar .tool-title em {
+  display: none !important;
 }
 
 .topbar {
@@ -68,8 +73,8 @@ body {
   display: grid;
   place-items: center;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-  box-shadow: var(--shadow);
+  background: linear-gradient(135deg, var(--accent), #a81f2e);
+  box-shadow: var(--glow-red, 0 0 18px rgba(224, 53, 69, 0.28));
 }
 
 .brand h1 {
@@ -99,8 +104,8 @@ body {
 
 #searchInput:focus {
   outline: none;
-  border-color: rgba(79, 140, 255, 0.55);
-  box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.12);
+  border-color: rgba(224, 53, 69, 0.55);
+  box-shadow: 0 0 0 4px var(--accent-soft, rgba(224, 53, 69, 0.12));
 }
 
 .search-results {
@@ -166,6 +171,24 @@ body {
   flex: 1;
 }
 
+body.frameless:not(.pcd-embed) .layout {
+  height: auto;
+  min-height: 0;
+}
+
+body.frameless:not(.pcd-embed) .main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+body.frameless:not(.pcd-embed) .tab-panel.active {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+}
+
 .sidebar,
 .feed-panel,
 .detail-panel {
@@ -205,8 +228,8 @@ body {
   height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  background: rgba(79, 140, 255, 0.14);
-  color: #b8d0ff;
+  background: var(--accent-soft, rgba(224, 53, 69, 0.14));
+  color: #ffb4bc;
   font-size: 0.82rem;
 }
 
@@ -233,8 +256,8 @@ body {
 }
 
 .game-item.active {
-  border-color: rgba(79, 140, 255, 0.45);
-  background: rgba(79, 140, 255, 0.08);
+  border-color: rgba(224, 53, 69, 0.45);
+  background: var(--accent-soft, rgba(224, 53, 69, 0.08));
 }
 
 .game-item img {
@@ -300,13 +323,17 @@ body {
 
 .tab.active {
   color: var(--text);
-  border-color: rgba(79, 140, 255, 0.45);
-  background: rgba(79, 140, 255, 0.12);
+  border-color: rgba(224, 53, 69, 0.45);
+  background: var(--accent-soft, rgba(224, 53, 69, 0.12));
 }
 
 .tab-panel {
   min-height: 0;
   height: calc(100vh - 170px);
+}
+
+body.frameless:not(.pcd-embed) .tab-panel {
+  height: calc(100% - 52px);
 }
 
 .tab-panel[hidden] {
@@ -480,12 +507,13 @@ body {
 
 .feed-item:hover,
 .feed-item.active {
-  border-color: rgba(79, 140, 255, 0.35);
-  background: rgba(79, 140, 255, 0.06);
+  border-color: rgba(224, 53, 69, 0.35);
+  background: var(--accent-soft, rgba(224, 53, 69, 0.06));
 }
 
 .feed-item.unread {
   border-left: 3px solid var(--accent);
+  box-shadow: inset 0 0 0 1px transparent, var(--glow-red, none);
 }
 
 .feed-top {
@@ -502,9 +530,11 @@ body {
 
 .panel-head-right {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 2px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
   font-size: 0.82rem;
 }
 
@@ -513,8 +543,8 @@ body {
   align-items: center;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(124, 92, 255, 0.16);
-  color: #d8cbff;
+  background: var(--cyan-soft, rgba(62, 199, 255, 0.12));
+  color: #9edfff;
   font-size: 0.78rem;
 }
 
@@ -573,12 +603,12 @@ body {
 .detail-content {
   line-height: 1.6;
   font-size: 0.95rem;
-  color: #dbe4ff;
+  color: var(--text);
 }
 
 .detail-content p { margin: 0 0 12px; }
 .detail-content img { max-width: 100%; border-radius: 10px; }
-.detail-content a { color: #9ec1ff; }
+.detail-content a { color: var(--cyan, #3ec7ff); }
 
 .btn {
   border: 1px solid var(--border);
@@ -592,7 +622,8 @@ body {
 
 .btn.accent {
   border-color: transparent;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  background: linear-gradient(135deg, var(--accent), #b82836);
+  box-shadow: var(--glow-red, 0 0 14px rgba(224, 53, 69, 0.22));
 }
 
 .btn.ghost {
@@ -653,7 +684,7 @@ body {
 .progress-bar {
   height: 100%;
   width: 0%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+  background: linear-gradient(90deg, var(--accent), var(--cyan, #3ec7ff));
   transition: width 0.25s ease;
 }
 

@@ -347,6 +347,33 @@ class GameStore:
                 conn.execute("UPDATE changelogs SET is_read = 1 WHERE entry_id = ?", (entry_id,))
         return {"ok": True}
 
+    def mark_all_read(
+        self,
+        appid: int | None = None,
+        *,
+        patch_only: bool = False,
+        favorites_only: bool = False,
+    ) -> dict[str, Any]:
+        """Mark unread feed rows as read, respecting the same filters as get_feed."""
+        clauses = ["c.is_read = 0"]
+        params: list[Any] = []
+        join = ""
+        if appid is not None and int(appid) > 0:
+            clauses.append("c.appid = ?")
+            params.append(int(appid))
+        if patch_only:
+            clauses.append("c.is_patch = 1")
+        if favorites_only:
+            join = " JOIN games g ON g.appid = c.appid"
+            clauses.append("COALESCE(g.favorite, 0) = 1")
+        where = " AND ".join(clauses)
+        sql = f"UPDATE changelogs SET is_read = 1 WHERE entry_id IN (SELECT c.entry_id FROM changelogs c{join} WHERE {where})"
+        with self._lock:
+            with self._connect() as conn:
+                cur = conn.execute(sql, params)
+                updated = int(cur.rowcount or 0)
+        return {"ok": True, "updated": updated}
+
     def export_meta(self) -> dict[str, Any]:
         with self._lock:
             with self._connect() as conn:

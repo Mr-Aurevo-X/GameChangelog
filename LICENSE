@@ -1,0 +1,37 @@
+Copyright (c) 2026 Mr-Aurevo-X
+
+PROPRIETARY SOFTWARE — ALL RIGHTS RESERVED
+
+Mr-Aurevo-X Suite tools (PC Command hubs, Install-Easy, standalones, games,
+and public showcase apps) are provided for personal and professional use on
+your own machines. They remain 100% free of charge.
+
+Permission is granted to:
+- Use the software locally (source via Lancer / python where applicable, or
+  official windowed builds)
+- Obtain official binaries only through Install-Easy and/or the
+  MrAurevoX-Launcher Releases channel (github.com/Mr-Aurevo-X/MrAurevoX-Launcher)
+- Study public showcase repositories for evaluation
+
+Permission is NOT granted, without prior written consent from Mr-Aurevo-X, to:
+- Fork, republish, or mirror source code as a competing or substitute project
+- Redistribute copies of this software (source or binary) outside the official
+  Install-Easy / MrAurevoX-Launcher Releases channel
+- Sell, sublicense, or rebrand this software
+- Reverse engineer, decompile, or strip copyright / provenance notices
+- Remove or alter “© 2026 Mr-Aurevo-X” markers, legal disclaimers, or About text
+
+NO WARRANTY
+This software is provided “as is”, without warranty of any kind. Updates are
+NOT guaranteed. There is no commitment to publish future versions, fixes, or
+features.
+
+100% FREE · 100% LOCAL (unless a product explicitly documents otherwise)
+No payment is required for the intended use. No cloud service and no telemetry
+are operated by Mr-Aurevo-X as part of the Suite products covered here, except
+where a product’s own privacy notice states otherwise.
+
+Third-party components (Python, pywebview, PyInstaller, fonts, game engines,
+etc.) remain under their respective upstream licenses.
+
+Aligns with Suite Mr-Aurevo-X Terms (Atelier / hub → About / legal kit).

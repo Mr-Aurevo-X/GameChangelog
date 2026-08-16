@@ -650,6 +650,21 @@ function bindEvents() {
 
   $("refreshBtn").addEventListener("click", () => startRefresh(true));
 
+  $("readAllBtn").addEventListener("click", async () => {
+    const filters = {
+      appid: state.selectedAppid || null,
+      patch_only: !!state.patchOnly,
+      favorites_only: !!state.favoritesOnly,
+    };
+    const res = await api().mark_all_read(filters.appid, filters);
+    if (!res?.ok) {
+      alert(res?.error || "Impossible de tout marquer comme lu.");
+      return;
+    }
+    await loadWatchlist();
+    await loadFeed();
+  });
+
   $("syncLibraryBtn").addEventListener("click", async () => {
     await importSteamLibrary(true);
   });
@@ -710,7 +725,15 @@ function bindEvents() {
   });
 }
 
+function lockToolTitle() {
+  const titleEl = document.getElementById("toolTitleText");
+  if (!titleEl) return;
+  titleEl.dataset.locked = "1";
+  titleEl.textContent = "Game Changelog";
+}
+
 async function boot() {
+  lockToolTitle();
   bindEvents();
   showLoading(false);
   await waitForApi();

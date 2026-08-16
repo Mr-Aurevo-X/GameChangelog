@@ -18,9 +18,10 @@ from steam_library import detect_owned_games, resolve_game_names
 from status import check_steam_services, game_status_links, steam_bug_forum_url
 from steamdb import patchnotes_url
 from store import GameStore
+from window_chrome import WindowChromeMixin, create_tool_window
 
 APP_TITLE = "Game Changelog"
-DEFAULT_ACCENT = "#4f8cff"
+DEFAULT_ACCENT = "#e03545"
 ENV_ACCENT = "MRAUREVOX_ACCENT"
 ENV_LANG = "MRAUREVOX_LANG"
 REFRESH_WORKERS = 4
@@ -82,9 +83,11 @@ def resolve_suite_language(default: str = "fr") -> str:
     return default if default in ("fr", "en") else "fr"
 
 
-class Api:
+class Api(WindowChromeMixin):
     def __init__(self) -> None:
         self._window: Any = None
+        self._maximized = False
+        self._min_size = (960, 620)
         self._store = GameStore(data_dir() / "gamechangelog.db")
         self._refresh_lock = threading.Lock()
         self._refresh_thread: threading.Thread | None = None
@@ -110,7 +113,7 @@ class Api:
         }
 
     def set_window(self, window: Any) -> None:
-        self._window = window
+        WindowChromeMixin.set_window(self, window)
 
     def get_suite_settings(self) -> dict[str, Any]:
         return {
@@ -243,6 +246,22 @@ class Api:
         try:
             self._store.mark_read(str(entry_id))
             return {"ok": True}
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
+    def mark_all_read(self, appid: int | None = None, filters: dict[str, Any] | None = None) -> dict[str, Any]:
+        try:
+            flt = filters if isinstance(filters, dict) else {}
+            # Prefer explicit filters from UI; keep legacy appid arg as fallback.
+            raw_appid = flt.get("appid", appid)
+            aid = int(raw_appid) if raw_appid not in (None, "", 0, "0") else None
+            patch_only = bool(flt.get("patch_only"))
+            favorites_only = bool(flt.get("favorites_only"))
+            return self._store.mark_all_read(
+                aid,
+                patch_only=patch_only,
+                favorites_only=favorites_only,
+            )
         except Exception as exc:
             return {"ok": False, "error": str(exc)}
 
@@ -496,16 +515,15 @@ def main() -> None:
         raise SystemExit(f"UI introuvable: {index}")
 
     api = Api()
-    window = webview.create_window(
-        f"{APP_TITLE}",
+    create_tool_window(
+        title=f"{APP_TITLE}",
         url=index.as_uri(),
         js_api=api,
         width=1280,
         height=820,
         min_size=(960, 620),
-        background_color="#0b0d12",
+        background_color="#06070c",
     )
-    api.set_window(window)
     webview.start()
 
 
