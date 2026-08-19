@@ -22,6 +22,7 @@ from steam_library import detect_owned_games, resolve_game_names
 from status import check_steam_services, game_status_links, steam_bug_forum_url
 from steamdb import patchnotes_url
 from store import GameStore
+from release_notice import check_latest, open_release_url
 from window_chrome import WindowChromeMixin, create_tool_window
 
 APP_TITLE = "Game Changelog"
@@ -143,6 +144,20 @@ class Api(WindowChromeMixin):
             "language": resolve_suite_language(),
             "app_title": APP_TITLE,
         }
+
+    def check_latest_release(self) -> dict[str, Any]:
+        return check_latest(
+            app_dir(),
+            source_repo="Mr-Aurevo-X/GameChangelog",
+            zip_name="GameChangelog.zip",
+        )
+
+    def open_release_page(self, url: str = "") -> dict[str, Any]:
+        target = (url or "").strip()
+        if not target:
+            info = self.check_latest_release()
+            target = str(info.get("releaseUrl") or "")
+        return open_release_url(target)
 
     def search_games(self, query: str) -> dict[str, Any]:
         try:

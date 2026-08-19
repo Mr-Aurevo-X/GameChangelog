@@ -799,6 +799,48 @@ function lockToolTitle() {
   titleEl.textContent = "Game Changelog";
 }
 
+async function checkReleaseNotice() {
+  const a = api();
+  if (!a || typeof a.check_latest_release !== "function") return;
+  let info;
+  try {
+    info = await a.check_latest_release();
+  } catch (_) {
+    return;
+  }
+  const bar = document.getElementById("hubReleaseBanner");
+  if (!bar || !info?.ok || !info.updateAvailable) return;
+  const remote = String(info.remote || "");
+  try {
+    if (sessionStorage.getItem("hubReleaseDismissed") === remote) return;
+  } catch (_) {}
+  bar.hidden = false;
+  bar.setAttribute("role", "status");
+  const msg = info.message || `Nouvelle version ${remote}`;
+  bar.innerHTML =
+    '<div class="hub-release-text"><strong>Nouvelle version</strong><span></span></div>' +
+    '<div class="hub-release-actions">' +
+    '<button type="button" class="hub-release-btn" id="hubReleaseOpen">Ouvrir la release</button>' +
+    '<button type="button" class="hub-release-dismiss" id="hubReleaseDismiss" aria-label="Fermer">×</button>' +
+    "</div>";
+  const span = bar.querySelector(".hub-release-text span");
+  if (span) span.textContent = msg;
+  document.getElementById("hubReleaseDismiss")?.addEventListener("click", () => {
+    try {
+      sessionStorage.setItem("hubReleaseDismissed", remote);
+    } catch (_) {}
+    bar.hidden = true;
+    bar.innerHTML = "";
+  });
+  document.getElementById("hubReleaseOpen")?.addEventListener("click", async () => {
+    try {
+      if (typeof a.open_release_page === "function") {
+        await a.open_release_page(info.releaseUrl || "");
+      }
+    } catch (_) {}
+  });
+}
+
 async function boot() {
   lockToolTitle();
   bindEvents();
@@ -824,6 +866,7 @@ async function boot() {
       pollRefreshProgress();
     }
   }
+  void checkReleaseNotice();
 }
 
 boot();
