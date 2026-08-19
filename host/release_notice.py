@@ -3,7 +3,7 @@
 SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
 Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
 
-Read-only GitHub Latest check. Opens a browser link. Never downloads a zip.
+Read-only GitHub Latest check on this product's own repo. Opens a browser link. Never downloads a zip.
 """
 from __future__ import annotations
 
@@ -16,11 +16,10 @@ import urllib.request
 from pathlib import Path
 from typing import Any
 
-BINARY_RELEASE_REPO = "Mr-Aurevo-X/PCCommand-Releases"
-_LEGACY_BINARY_RELEASE_REPO = "Mr-Aurevo-X/MrAurevoX-Launcher"
 _ALLOWED_API_HOSTS = frozenset({"api.github.com"})
 _ALLOWED_RELEASE_HOSTS = frozenset({"github.com", "www.github.com"})
 _ALLOWED_RELEASE_ORGS = frozenset({"mr-aurevo-x"})
+_ALLOWED_REPOS = frozenset({"Mr-Aurevo-X/GameChangelog"})
 
 
 def normalize_version(raw: str | None) -> str:
@@ -90,6 +89,8 @@ def _assert_api_url(url: str) -> None:
 
 
 def _api_latest_release(repo: str) -> dict[str, Any]:
+    if repo not in _ALLOWED_REPOS:
+        raise ValueError(f"release repo not allowlisted: {repo!r}")
     url = f"https://api.github.com/repos/{repo}/releases/latest"
     _assert_api_url(url)
     req = urllib.request.Request(
@@ -109,49 +110,34 @@ def check_latest(
     *,
     source_repo: str,
     zip_name: str | None = None,
-    binary_repo: str = BINARY_RELEASE_REPO,
 ) -> dict[str, Any]:
-    """Compare local version.json to GitHub Latest. Never downloads."""
+    """Compare local version.json to GitHub Latest on source_repo. Never downloads."""
     local = read_local_version(app_dir)
-    allowed = {source_repo, binary_repo, _LEGACY_BINARY_RELEASE_REPO}
-    chosen: dict[str, Any] | None = None
     last_err = None
-    for repo in (binary_repo, _LEGACY_BINARY_RELEASE_REPO, source_repo):
-        if repo not in allowed:
-            continue
-        try:
-            raw = _api_latest_release(repo)
-            tag = str(raw.get("tag_name") or "").strip()
-            html = str(raw.get("html_url") or "").strip() or (
-                f"https://github.com/{repo}/releases/latest"
-            )
-            names = [str(a.get("name") or "") for a in (raw.get("assets") or [])]
-            has_zip = bool(zip_name and zip_name in names)
-            payload = {
-                "repo": repo,
-                "tag": tag,
-                "remote": normalize_version(tag) or tag,
-                "releaseUrl": html,
-                "hasZip": has_zip,
-                "asset": zip_name,
-            }
-            if not payload["remote"]:
-                continue
-            if repo in (binary_repo, _LEGACY_BINARY_RELEASE_REPO):
-                if has_zip or chosen is None:
-                    chosen = payload
-                    if has_zip:
-                        break
-            elif chosen is None:
-                chosen = payload
-        except urllib.error.HTTPError as exc:
-            last_err = f"HTTP {exc.code}"
-            if exc.code in (401, 403, 404):
-                continue
-            break
-        except Exception as exc:  # noqa: BLE001
-            last_err = str(exc)
-            continue
+    try:
+        raw = _api_latest_release(source_repo)
+        tag = str(raw.get("tag_name") or "").strip()
+        html = str(raw.get("html_url") or "").strip() or (
+            f"https://github.com/{source_repo}/releases/latest"
+        )
+        names = [str(a.get("name") or "") for a in (raw.get("assets") or [])]
+        has_zip = bool(zip_name and zip_name in names)
+        chosen = {
+            "repo": source_repo,
+            "tag": tag,
+            "remote": normalize_version(tag) or tag,
+            "releaseUrl": html,
+            "hasZip": has_zip,
+            "asset": zip_name,
+        }
+        if not chosen["remote"]:
+            chosen = None
+    except urllib.error.HTTPError as exc:
+        last_err = f"HTTP {exc.code}"
+        chosen = None
+    except Exception as exc:  # noqa: BLE001
+        last_err = str(exc)
+        chosen = None
 
     if not chosen:
         return {
