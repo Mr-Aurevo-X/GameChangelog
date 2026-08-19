@@ -16,7 +16,7 @@ Conserver les mentions de copyright et en-têtes source. Ne pas retirer les text
 
 ## 2. Aucune mise à jour garantie
 
-Le logiciel est livré comme un ensemble **autonome et fonctionnel**. L’éditeur n’a **aucune obligation** de fournir des versions futures, correctifs, adaptations OS ou maintenance. Pas de mise à jour automatique in-app : une nouvelle version se prend manuellement (clone GitHub ou zip de release).
+Le logiciel est livré comme un ensemble **autonome et fonctionnel**. L’éditeur n’a **aucune obligation** de fournir des versions futures, correctifs, adaptations OS ou maintenance. Pas de mise à jour automatique in-app : le hub peut afficher une notification si GitHub Latest est plus récent, avec un lien navigateur vers la release. Une nouvelle version se prend manuellement.
 
 ## 3. « En l’état » / « selon disponibilité »
 

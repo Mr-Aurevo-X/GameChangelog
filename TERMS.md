@@ -16,7 +16,7 @@ You must keep copyright notices and source headers. You must not strip About / l
 
 ## 2. No updates guaranteed
 
-The software is delivered as a finished, standalone build. The publisher has **no obligation** to provide future versions, patches, OS compatibility fixes, or long-term maintenance. There is no in-app automatic updater: you install a newer build yourself (GitHub clone or release zip).
+The software is delivered as a finished, standalone build. The publisher has **no obligation** to provide future versions, patches, OS compatibility fixes, or long-term maintenance. There is no in-app automatic updater. The hub may show a notice when GitHub Latest is newer, with a browser link to that release. You install a newer build yourself.
 
 ## 3. As-is / as-available — total disclaimer
 
