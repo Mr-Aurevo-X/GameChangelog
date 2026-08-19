@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read-only distribution
+    url: https://github.com/Mr-Aurevo-X
+    about: This repository does not accept issues or pull requests.

@@ -1,44 +1,17 @@
-# Licence propriétaire — Mr-Aurevo-X
+# Licence — traduction informative (français)
 
-Copyright © 2026 Mr-Aurevo-X  
-**Logiciel propriétaire — tous droits réservés**
+**Copyright (c) 2026 Mr-Aurevo-X. Tous droits réservés.**
 
-Les outils de la Suite Mr-Aurevo-X (hubs PC Command, Install-Easy, standalones,
-jeux, apps vitrine publique) sont fournis pour un usage personnel ou
-professionnel sur vos propres machines. Ils restent **100 % gratuits**.
+Le fichier `LICENSE` anglais contient le texte **verbatim** de la
+[PolyForm Noncommercial License 1.0.0](https://polyformproject.org/licenses/noncommercial/1.0.0).
+**Seul ce texte anglais fait foi.** La présente page n’est pas une licence distincte.
 
-## Autorisé
+## En résumé
 
-- Utiliser le logiciel en local (sources via `Lancer` / Python le cas échéant,
-  ou builds officiels)
-- Obtenir les binaires **uniquement** via Install-Easy et/ou le canal Releases
-  `MrAurevoX-Launcher` (github.com/Mr-Aurevo-X/MrAurevoX-Launcher)
-- Consulter les dépôts vitrine publics à des fins d’évaluation
+- Usage **personnel, éducatif, interne non commercial** : autorisé, sans frais.
+- Toute copie redistribuée doit conserver les notices de copyright, en-têtes source et la licence.
+- **Exploitation commerciale** (revente, SaaS payant, packaging conseil payant, sous-licence) : interdite par PolyForm Noncommercial, sauf accord écrit séparé.
+- **Aucune licence de marque** n’est accordée (voir `TRADEMARK.md`).
+- Logiciel fourni **EN L’ÉTAT**, sans garantie. Aucune obligation de mises à jour, correctifs ou maintenance.
 
-## Interdit sans accord écrit préalable de Mr-Aurevo-X
-
-- Forker, republier ou mirroir le code source comme projet concurrent ou de
-  substitution
-- Redistribuer des copies (sources ou binaires) **hors** du canal officiel
-  Install-Easy / Releases `MrAurevoX-Launcher`
-- Vendre, sous-licencier ou rebrander le logiciel
-- Procéder à de l’ingénierie inverse agressive, décompiler, ou retirer les
-  mentions de provenance / copyright
-- Supprimer ou altérer les mentions « © 2026 Mr-Aurevo-X », les disclaimers
-  légaux ou les textes À propos
-
-## Absence de garantie
-
-Logiciel fourni « en l’état », sans garantie d’aucune sorte. Aucun engagement
-de publier des versions futures, corrections ou fonctionnalités.
-
-## Gratuit · local
-
-Aucun paiement requis pour l’usage prévu. Pas de service cloud ni de télémétrie
-opérés par Mr-Aurevo-X dans le cadre des produits Suite couverts ici, sauf
-mention contraire dans la notice de confidentialité du produit.
-
-Les composants tiers (Python, pywebview, PyInstaller, polices, moteurs de jeu,
-etc.) restent sous leurs licences amont respectives.
-
-S’aligne sur les CGU Suite Mr-Aurevo-X (Atelier / hub → À propos / kit légal).
+Composants tiers (Python, pywebview, WebView2, polices, etc.) restent sous leurs licences amont.

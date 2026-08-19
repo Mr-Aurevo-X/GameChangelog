@@ -1,0 +1,34 @@
+name: Close external PRs and issues
+on:
+  pull_request_target:
+    types: [opened]
+  issues:
+    types: [opened]
+permissions:
+  pull-requests: write
+  issues: write
+jobs:
+  close:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const body = [
+              'Thank you for your interest.',
+              '',
+              'This repository is a read-only public distribution.',
+              'It is developed exclusively by the project owner (closed inner-source).',
+              'Pull requests and issues are not accepted and are closed without review.',
+              '',
+              'Please do not submit patches or bug reports here.',
+            ].join('\n');
+            const { owner, repo } = context.repo;
+            if (context.eventName === 'issues') {
+              await github.rest.issues.createComment({ owner, repo, issue_number: context.issue.number, body });
+              await github.rest.issues.update({ owner, repo, issue_number: context.issue.number, state: 'closed' });
+            } else {
+              const n = context.payload.pull_request.number;
+              await github.rest.issues.createComment({ owner, repo, issue_number: n, body });
+              await github.rest.pulls.update({ owner, repo, pull_number: n, state: 'closed' });
+            }

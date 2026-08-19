@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
+ * SPDX-License-Identifier: PolyForm-Noncommercial-1.0.0
+ * Author: Mr-Aurevo-X | https://github.com/Mr-Aurevo-X
+ */
 /* App aliases on top of PC Command kit tokens (kit.css / base.css). */
 :root {
   --panel-2: var(--panel2, #12161f);
