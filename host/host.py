@@ -13,7 +13,7 @@ from typing import Any
 import webview
 
 from dedup import merge_entries
-from steam import fetch_game_changelogs, search_games
+from steam import fetch_game_changelogs, lookup_steam_app, lookup_steam_app_or_placeholder, search_games
 from steam_library import detect_owned_games, resolve_game_names
 from status import check_steam_services, game_status_links, steam_bug_forum_url
 from steamdb import patchnotes_url
@@ -143,10 +143,44 @@ class Api(WindowChromeMixin):
     def search_games(self, query: str) -> dict[str, Any]:
         try:
             lang = "french" if resolve_suite_language() == "fr" else "english"
-            results = search_games(query, language=lang, country="FR")
+            term = (query or "").strip()
+            if term.isdigit() and 1 <= len(term) <= 8:
+                game = lookup_steam_app_or_placeholder(int(term), language=lang)
+                if int(game.get("appid") or 0) > 0:
+                    return {"ok": True, "results": [game]}
+            results = search_games(term, language=lang, country="FR")
             return {"ok": True, "results": results}
         except Exception as exc:
             return {"ok": False, "error": str(exc), "results": []}
+
+    def lookup_steam_app(self, appid: int) -> dict[str, Any]:
+        try:
+            lang = "french" if resolve_suite_language() == "fr" else "english"
+            game = lookup_steam_app_or_placeholder(int(appid), language=lang)
+            if int(game.get("appid") or 0) <= 0:
+                return {"ok": False, "error": "AppID invalide", "game": None}
+            return {"ok": True, "game": game}
+        except Exception as exc:
+            return {"ok": False, "error": str(exc), "game": None}
+
+    def add_game_by_appid(self, appid: int) -> dict[str, Any]:
+        """Add any Steam AppID to the watchlist (no local library ownership required)."""
+        try:
+            lang = "french" if resolve_suite_language() == "fr" else "english"
+            meta = lookup_steam_app_or_placeholder(int(appid), language=lang)
+            app_id = int(meta.get("appid") or 0)
+            if app_id <= 0:
+                return {"ok": False, "error": "AppID invalide"}
+            self._store.add_game(
+                app_id,
+                str(meta.get("name") or f"Jeu {app_id}"),
+                str(meta.get("icon_url") or ""),
+                str(meta.get("store_url") or ""),
+                installed=False,
+            )
+            return {"ok": True, "game": meta}
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
 
     def get_watchlist(self) -> dict[str, Any]:
         try:
@@ -156,8 +190,21 @@ class Api(WindowChromeMixin):
 
     def add_game(self, appid: int, name: str, icon_url: str = "", store_url: str = "") -> dict[str, Any]:
         try:
-            self._store.add_game(int(appid), str(name), str(icon_url or ""), str(store_url or ""))
-            return {"ok": True}
+            app_id = int(appid)
+            game_name = str(name or "").strip()
+            icon = str(icon_url or "")
+            store = str(store_url or "")
+            if not game_name or game_name.startswith("Jeu "):
+                lang = "french" if resolve_suite_language() == "fr" else "english"
+                meta = lookup_steam_app(app_id, language=lang)
+                if meta:
+                    game_name = str(meta.get("name") or game_name or f"Jeu {app_id}")
+                    icon = icon or str(meta.get("icon_url") or "")
+                    store = store or str(meta.get("store_url") or "")
+            if not store:
+                store = f"https://store.steampowered.com/app/{app_id}/"
+            self._store.add_game(app_id, game_name or f"Jeu {app_id}", icon, store, installed=False)
+            return {"ok": True, "appid": app_id}
         except Exception as exc:
             return {"ok": False, "error": str(exc)}
 

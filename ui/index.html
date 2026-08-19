@@ -32,7 +32,7 @@
         </div>
       </div>
       <div class="search-wrap">
-        <input id="searchInput" type="search" placeholder="Rechercher un jeu sur Steam…" autocomplete="off" />
+        <input id="searchInput" type="search" placeholder="Rechercher sur le Steam Store (sans l'avoir dans la lib)…" autocomplete="off" />
         <div id="searchResults" class="search-results" hidden></div>
       </div>
       <div class="top-actions">
@@ -61,8 +61,18 @@
           <h2>Mes jeux</h2>
           <span id="gameCount" class="pill">0</span>
         </div>
+        <form id="addAppIdForm" class="add-appid-form">
+          <label class="field add-appid-field">
+            <span>Ajouter par AppID Steam</span>
+            <div class="add-appid-row">
+              <input id="addAppIdInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ex. 570" autocomplete="off" />
+              <button type="submit" class="btn accent" id="addAppIdBtn">Ajouter</button>
+            </div>
+          </label>
+          <p class="muted add-appid-hint">Pas besoin d’avoir le jeu dans votre bibliothèque Steam.</p>
+        </form>
         <div id="watchlist" class="watchlist">
-          <p class="empty-hint">Recherchez un jeu pour commencer.</p>
+          <p class="empty-hint">Recherchez un jeu ou saisissez un AppID Steam.</p>
         </div>
       </aside>
 

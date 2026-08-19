@@ -96,7 +96,7 @@ function renderWatchlist() {
     : state.watchlist;
   $("gameCount").textContent = String(visible.length);
   if (!visible.length) {
-    root.innerHTML = `<p class="empty-hint">${state.favoritesOnly ? "Aucun favori pour le moment." : "Recherchez un jeu pour commencer."}</p>`;
+    root.innerHTML = `<p class="empty-hint">${state.favoritesOnly ? "Aucun favori pour le moment." : "Recherchez un jeu ou saisissez un AppID Steam."}</p>`;
     return;
   }
 
@@ -268,18 +268,64 @@ function renderSearchResults(results) {
     .join("");
 
   root.querySelectorAll(".search-item").forEach((item) => {
-    item.addEventListener("click", async () => {
-      const appid = Number(item.dataset.appid);
-      const name = item.dataset.name;
-      const icon = item.dataset.icon;
-      const store = item.dataset.store;
-      await api().add_game(appid, name, icon, store);
-      root.hidden = true;
-      $("searchInput").value = "";
-      await loadWatchlist();
-      await startRefresh();
-    });
+    item.addEventListener("click", () => addGameFromSearch(item));
   });
+}
+
+async function addGameFromSearch(item) {
+  const appid = Number(item.dataset.appid);
+  const name = item.dataset.name;
+  const icon = item.dataset.icon;
+  const store = item.dataset.store;
+  const root = $("searchResults");
+  try {
+    await api().add_game(appid, name, icon, store);
+    if (root) {
+      root.hidden = true;
+    }
+    $("searchInput").value = "";
+    await loadWatchlist();
+    showLoading(true, "Chargement des patch notes…", 20);
+    try {
+      await api().refresh_game(appid);
+    } catch (_) {
+      /* cached feed if any */
+    }
+    showLoading(false);
+    state.selectedAppid = appid;
+    renderWatchlist();
+    await loadFeed();
+    await updateLastSync();
+  } catch (err) {
+    alert(String(err?.message || err || "Impossible d'ajouter le jeu."));
+  }
+}
+
+async function addGameByAppId(raw) {
+  const trimmed = String(raw || "").trim();
+  if (!/^\d{1,8}$/.test(trimmed)) {
+    alert("Saisissez un AppID Steam valide (chiffres uniquement, ex. 570).");
+    return;
+  }
+  const appid = Number(trimmed);
+  const res = await api().add_game_by_appid(appid);
+  if (!res?.ok) {
+    alert(res?.error || "Impossible d'ajouter ce jeu.");
+    return;
+  }
+  $("addAppIdInput").value = "";
+  await loadWatchlist();
+  showLoading(true, "Chargement des patch notes…", 20);
+  try {
+    await api().refresh_game(appid);
+  } catch (_) {
+    /* keep going */
+  }
+  showLoading(false);
+  state.selectedAppid = appid;
+  renderWatchlist();
+  await loadFeed();
+  await updateLastSync();
 }
 
 async function runSearch(query) {
@@ -333,7 +379,7 @@ async function updateLastSync() {
   }
 }
 
-async function startRefresh(installedOnly = true) {
+async function startRefresh(installedOnly = false) {
   // Guard against accidental Event objects from onclick handlers.
   if (typeof installedOnly !== "boolean") {
     installedOnly = true;
@@ -659,7 +705,7 @@ function bindEvents() {
     await loadFeed();
   });
 
-  $("refreshBtn").addEventListener("click", () => startRefresh(true));
+  $("refreshBtn").addEventListener("click", () => startRefresh(false));
 
   $("readAllBtn").addEventListener("click", async () => {
     const filters = {
@@ -678,6 +724,11 @@ function bindEvents() {
 
   $("syncLibraryBtn").addEventListener("click", async () => {
     await importSteamLibrary(true);
+  });
+
+  $("addAppIdForm")?.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await addGameByAppId($("addAppIdInput")?.value);
   });
 
   $("skipLoadingBtn").addEventListener("click", async () => {

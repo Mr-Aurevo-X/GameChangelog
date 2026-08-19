@@ -220,6 +220,31 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
   font-size: 1rem;
 }
 
+.add-appid-form {
+  margin-bottom: 12px;
+}
+
+.add-appid-field {
+  margin-bottom: 0;
+}
+
+.add-appid-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.add-appid-row input {
+  min-width: 0;
+}
+
+.add-appid-hint {
+  margin: 8px 0 0;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;

@@ -37,6 +37,65 @@ def _steam_store_url(appid: int) -> str:
     return f"https://store.steampowered.com/app/{appid}/"
 
 
+def _steam_icon_url(appid: int) -> str:
+    return f"https://cdn.cloudflare.steamstatic.com/steam/apps/{appid}/capsule_sm_120.jpg"
+
+
+def lookup_steam_app(appid: int, *, language: str = "french") -> dict[str, Any] | None:
+    """Resolve Steam Store metadata for any AppID (no library ownership required)."""
+    try:
+        appid = int(appid)
+    except (TypeError, ValueError):
+        return None
+    if appid <= 0:
+        return None
+    url = (
+        "https://store.steampowered.com/api/appdetails"
+        f"?appids={appid}&l={quote(language)}"
+    )
+    try:
+        data = _request_json(url)
+    except (HTTPError, URLError, json.JSONDecodeError, TimeoutError, OSError):
+        return None
+    block = data.get(str(appid)) or {}
+    if not block.get("success"):
+        return None
+    info = block.get("data") or {}
+    name = str(info.get("name") or "").strip()
+    if not name:
+        return None
+    return {
+        "appid": appid,
+        "name": name,
+        "icon_url": str(info.get("header_image") or _steam_icon_url(appid)),
+        "store_url": _steam_store_url(appid),
+    }
+
+
+def lookup_steam_app_or_placeholder(appid: int, *, language: str = "french") -> dict[str, Any]:
+    """Store lookup with minimal fallback when appdetails is unavailable."""
+    found = lookup_steam_app(appid, language=language)
+    if found:
+        return found
+    try:
+        appid = int(appid)
+    except (TypeError, ValueError):
+        appid = 0
+    if appid <= 0:
+        return {
+            "appid": 0,
+            "name": "AppID invalide",
+            "icon_url": "",
+            "store_url": "",
+        }
+    return {
+        "appid": appid,
+        "name": f"Jeu {appid}",
+        "icon_url": _steam_icon_url(appid),
+        "store_url": _steam_store_url(appid),
+    }
+
+
 def _event_url(appid: int, event_gid: str | int) -> str:
     return f"https://store.steampowered.com/news/app/{appid}/view/{event_gid}"
 
