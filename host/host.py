@@ -350,13 +350,25 @@ class Api(WindowChromeMixin):
                 return
 
             name_cache = data_dir() / "steam_names.json"
-            detected = detect_owned_games(name_cache_path=name_cache)
+            locale = resolve_suite_language()
+            detected = detect_owned_games(name_cache_path=name_cache, locale=locale)
             if not detected.get("ok"):
+                err = str(detected.get("error") or "Steam introuvable")
                 self._set_import_state(
                     running=False,
                     done=True,
                     phase="error",
-                    error=str(detected.get("error") or "Steam introuvable"),
+                    error=err,
+                )
+                return
+
+            hint = detected.get("hint")
+            if hint and not detected.get("games"):
+                self._set_import_state(
+                    running=False,
+                    done=True,
+                    phase="error",
+                    error=str(hint),
                 )
                 return
 
@@ -367,6 +379,11 @@ class Api(WindowChromeMixin):
                 self._store.set_setting("steam_library_imported", "1")
             if detected.get("steam_path"):
                 self._store.set_setting("steam_path", str(detected["steam_path"]))
+            if detected.get("steam_accounts"):
+                self._store.set_setting(
+                    "steam_accounts_json",
+                    json.dumps(detected.get("steam_accounts") or [], ensure_ascii=False),
+                )
 
             self._set_import_state(
                 running=False,
@@ -393,7 +410,7 @@ class Api(WindowChromeMixin):
 
     def _resolve_names_job(self, appids: list[int], cache_path: Path) -> None:
         try:
-            names = resolve_game_names(appids, cache_path)
+            names = resolve_game_names(appids, cache_path, locale=resolve_suite_language())
             if names:
                 self._store.update_game_names(names)
         except Exception:
@@ -483,8 +500,7 @@ class Api(WindowChromeMixin):
 
     def detect_steam_library(self) -> dict[str, Any]:
         try:
-            result = detect_owned_games()
-            return result
+            return detect_owned_games(locale=resolve_suite_language())
         except Exception as exc:
             return {"ok": False, "error": str(exc), "games": []}
 
@@ -521,7 +537,15 @@ class Api(WindowChromeMixin):
         try:
             empty = self._store.is_watchlist_empty()
             imported = self._store.get_setting("steam_library_imported") == "1"
-            return {"ok": True, "should_import": empty and not imported}
+            with self._import_lock:
+                last_error = self._import_state.get("error")
+            steam_path = self._store.get_setting("steam_path")
+            return {
+                "ok": True,
+                "should_import": empty and not imported,
+                "last_import_error": last_error,
+                "steam_path": steam_path,
+            }
         except Exception as exc:
             return {"ok": False, "error": str(exc), "should_import": False}
 

@@ -482,8 +482,10 @@ async function importSteamLibrary(force = false) {
 
   if (!res?.ok) {
     showLoading(false);
-    if (force && res?.error) alert(res.error);
-    return res;
+    const msg = res?.error || "Impossible d'importer la bibliothèque Steam.";
+    if (force) alert(msg);
+    else console.warn("[GameChangelog] import:", msg);
+    return { ok: false, imported: 0, error: msg };
   }
 
   if (Number(res.imported || 0) > 0) {
@@ -500,12 +502,21 @@ async function maybeImportSteamLibraryOnFirstLaunch() {
   try {
     const check = await api().should_import_steam_library();
     if (!check?.ok || !check.should_import) {
+      if (check?.last_import_error) {
+        console.warn("[GameChangelog] previous import:", check.last_import_error);
+      }
       return { imported: 0 };
     }
-    return importSteamLibrary(false);
+    const res = await importSteamLibrary(false);
+    if (res?.error) {
+      alert(`Import Steam : ${res.error}`);
+    }
+    return res;
   } catch (err) {
     showLoading(false);
-    return { ok: false, imported: 0, error: String(err) };
+    const msg = String(err);
+    alert(`Import Steam : ${msg}`);
+    return { ok: false, imported: 0, error: msg };
   }
 }
 

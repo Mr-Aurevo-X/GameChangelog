@@ -234,14 +234,15 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
 }
 
 .watchlist {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   min-height: 0;
   flex: 1;
 }
 
 .game-item {
   display: grid;
-  grid-template-columns: 40px 1fr auto;
+  grid-template-columns: 40px 1fr auto auto;
   gap: 10px;
   align-items: center;
   width: 100%;
@@ -271,6 +272,9 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
 .game-item strong {
   display: block;
   font-size: 0.92rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .game-item small {
@@ -427,7 +431,7 @@ body.frameless:not(.pcd-embed) .tab-panel {
 
 .status-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 10px;
 }
 
@@ -467,8 +471,13 @@ body.frameless:not(.pcd-embed) .tab-panel {
   color: #ffd166;
 }
 
-.game-item {
-  grid-template-columns: 40px 1fr auto auto;
+@media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: 1fr;
+  }
+  .brand {
+    flex-wrap: wrap;
+  }
 }
 
 @media (max-width: 1100px) {
@@ -697,9 +706,6 @@ body.frameless:not(.pcd-embed) .tab-panel {
 }
 
 @media (max-width: 1100px) {
-  .topbar {
-    grid-template-columns: 1fr;
-  }
   .layout {
     grid-template-columns: 1fr;
   }

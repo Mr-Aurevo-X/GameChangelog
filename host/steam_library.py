@@ -13,7 +13,7 @@ from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 _ROOT_TIMEOUT = 1.5
-_DETECT_TIMEOUT = 12.0
+_DETECT_TIMEOUT = float(os.environ.get("GC_STEAM_DETECT_TIMEOUT", "12"))
 _NAME_TIMEOUT = 8.0
 _NAME_WORKERS = 8
 
@@ -112,6 +112,7 @@ def _find_steam_path() -> Path | None:
         Path(r"C:\Program Files (x86)\Steam"),
         Path(r"C:\Program Files\Steam"),
         Path(os.environ.get("ProgramFiles(x86)", "") or r"C:\Program Files (x86)") / "Steam",
+        Path(os.environ.get("ProgramFiles", "") or r"C:\Program Files") / "Steam",
     ):
         if _run_with_timeout(lambda p=candidate: p.is_dir() and (p / "steam.exe").is_file(), 1.0, False):
             return candidate
@@ -226,33 +227,6 @@ def _scan_root(root: Path) -> list[dict[str, Any]]:
     return found
 
 
-def _most_recent_steamid64(steam_path: Path) -> str | None:
-    login = steam_path / "config" / "loginusers.vdf"
-    if not login.is_file():
-        return None
-    try:
-        data = _parse_vdf(login.read_text(encoding="utf-8", errors="replace"))
-    except OSError:
-        return None
-    users = data.get("users") or {}
-    if not isinstance(users, dict):
-        return None
-    recent = None
-    recent_ts = -1
-    for sid, info in users.items():
-        if not isinstance(info, dict):
-            continue
-        try:
-            ts = int(info.get("Timestamp") or 0)
-        except (TypeError, ValueError):
-            ts = 0
-        most = str(info.get("MostRecent") or "") == "1"
-        if most or ts > recent_ts:
-            recent = str(sid)
-            recent_ts = ts if not most else 10**18
-    return recent
-
-
 def _account_id_from_steamid64(steamid64: str) -> int | None:
     try:
         return int(steamid64) - 76561197960265728
@@ -260,13 +234,43 @@ def _account_id_from_steamid64(steamid64: str) -> int | None:
         return None
 
 
-def _owned_appids_from_librarycache(steam_path: Path) -> list[int]:
-    sid64 = _most_recent_steamid64(steam_path)
-    if not sid64:
+def _list_steam_users(steam_path: Path) -> list[dict[str, Any]]:
+    """All Steam accounts from loginusers.vdf (most recent first)."""
+    login = steam_path / "config" / "loginusers.vdf"
+    if not login.is_file():
         return []
-    account_id = _account_id_from_steamid64(sid64)
-    if not account_id:
+    try:
+        data = _parse_vdf(login.read_text(encoding="utf-8", errors="replace"))
+    except OSError:
         return []
+    users = data.get("users") or {}
+    if not isinstance(users, dict):
+        return []
+    rows: list[dict[str, Any]] = []
+    for sid, info in users.items():
+        if not isinstance(info, dict):
+            continue
+        account_id = _account_id_from_steamid64(str(sid))
+        if account_id is None:
+            continue
+        rows.append(
+            {
+                "steamid64": str(sid),
+                "account_id": account_id,
+                "most_recent": str(info.get("MostRecent") or "") == "1",
+                "persona": str(info.get("PersonaName") or "").strip(),
+            }
+        )
+    rows.sort(key=lambda row: (not row["most_recent"], row["steamid64"]))
+    return rows
+
+
+def _most_recent_steamid64(steam_path: Path) -> str | None:
+    users = _list_steam_users(steam_path)
+    return users[0]["steamid64"] if users else None
+
+
+def _owned_appids_from_account_cache(steam_path: Path, account_id: int) -> list[int]:
     cache_dir = steam_path / "userdata" / str(account_id) / "config" / "librarycache"
     if not cache_dir.is_dir():
         return []
@@ -284,6 +288,39 @@ def _owned_appids_from_librarycache(steam_path: Path) -> list[int]:
     except OSError:
         return []
     return sorted(set(appids))
+
+
+def _owned_appids_from_librarycache(steam_path: Path) -> tuple[list[int], dict[str, Any]]:
+    """Merge librarycache across all local Steam accounts."""
+    users = _list_steam_users(steam_path)
+    meta: dict[str, Any] = {
+        "accounts": [],
+        "librarycache_empty": True,
+        "hint": None,
+    }
+    if not users:
+        meta["hint"] = "Aucun compte Steam local — connectez-vous dans Steam une fois."
+        return [], meta
+
+    merged: set[int] = set()
+    for user in users:
+        ids = _owned_appids_from_account_cache(steam_path, int(user["account_id"]))
+        meta["accounts"].append(
+            {
+                **user,
+                "owned_count": len(ids),
+            }
+        )
+        merged.update(ids)
+
+    if merged:
+        meta["librarycache_empty"] = False
+    else:
+        meta["hint"] = (
+            "Cache bibliothèque Steam vide — ouvrez Steam une fois, "
+            "puis « Sync bibliothèque »."
+        )
+    return sorted(merged), meta
 
 
 def _load_name_cache(cache_path: Path) -> dict[str, str]:
@@ -306,8 +343,17 @@ def _save_name_cache(cache_path: Path, cache: dict[str, str]) -> None:
         pass
 
 
-def _fetch_app_name(appid: int) -> str | None:
-    url = f"https://store.steampowered.com/api/appdetails?appids={appid}&l=french"
+def _steam_store_lang(locale: str | None) -> str:
+    if locale and locale.lower().startswith("en"):
+        return "english"
+    if locale and locale.lower().startswith("fr"):
+        return "french"
+    return "english"
+
+
+def _fetch_app_name(appid: int, locale: str | None = None) -> str | None:
+    lang = _steam_store_lang(locale)
+    url = f"https://store.steampowered.com/api/appdetails?appids={appid}&l={lang}"
     req = Request(url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"})
     try:
         with urlopen(req, timeout=6) as resp:
@@ -322,7 +368,11 @@ def _fetch_app_name(appid: int) -> str | None:
         return None
 
 
-def resolve_game_names(appids: list[int], cache_path: Path | None = None) -> dict[int, str]:
+def resolve_game_names(
+    appids: list[int],
+    cache_path: Path | None = None,
+    locale: str | None = None,
+) -> dict[int, str]:
     """Resolve Steam app names with local cache + parallel store lookups."""
     cache = _load_name_cache(cache_path) if cache_path else {}
     result: dict[int, str] = {}
@@ -336,7 +386,7 @@ def resolve_game_names(appids: list[int], cache_path: Path | None = None) -> dic
 
     if missing:
         with ThreadPoolExecutor(max_workers=min(_NAME_WORKERS, len(missing))) as pool:
-            futures = {pool.submit(_fetch_app_name, appid): appid for appid in missing}
+            futures = {pool.submit(_fetch_app_name, appid, locale): appid for appid in missing}
             for future in as_completed(futures):
                 appid = futures[future]
                 try:
@@ -352,7 +402,10 @@ def resolve_game_names(appids: list[int], cache_path: Path | None = None) -> dic
     return result
 
 
-def _detect_owned_games_inner(name_cache_path: Path | None = None) -> dict[str, Any]:
+def _detect_owned_games_inner(
+    name_cache_path: Path | None = None,
+    locale: str | None = None,
+) -> dict[str, Any]:
     steam_path = _find_steam_path()
     if steam_path is None:
         return {"ok": False, "error": "Installation Steam introuvable", "games": [], "steam_path": None}
@@ -373,7 +426,13 @@ def _detect_owned_games_inner(name_cache_path: Path | None = None) -> dict[str, 
 
     # 2) Owned games from Steam local librarycache (includes non-installed)
     # Do NOT resolve names here (network) — keep detection fast.
-    owned_ids = _run_with_timeout(lambda: _owned_appids_from_librarycache(steam_path), 3.0, []) or []
+    owned_ids, cache_meta = _run_with_timeout(
+        lambda: _owned_appids_from_librarycache(steam_path),
+        3.0,
+        ([], {"librarycache_empty": True, "accounts": [], "hint": None}),
+    ) or ([], {"librarycache_empty": True, "accounts": [], "hint": None})
+    if not isinstance(owned_ids, list):
+        owned_ids = []
     for appid in owned_ids:
         if appid in games_by_id:
             continue
@@ -388,6 +447,21 @@ def _detect_owned_games_inner(name_cache_path: Path | None = None) -> dict[str, 
         }
 
     games = sorted(games_by_id.values(), key=lambda g: g["name"].lower())
+    hint = cache_meta.get("hint")
+    if hint and not installed_ids and not owned_ids:
+        return {
+            "ok": True,
+            "steam_path": str(steam_path),
+            "games": games,
+            "count": len(games),
+            "installed_count": len(installed_ids),
+            "owned_count": len(owned_ids),
+            "skipped_roots": skipped_roots,
+            "needs_name_resolve": [g["appid"] for g in games if str(g.get("name") or "").startswith("Jeu ")],
+            "steam_accounts": cache_meta.get("accounts") or [],
+            "librarycache_empty": bool(cache_meta.get("librarycache_empty")),
+            "hint": hint,
+        }
     return {
         "ok": True,
         "steam_path": str(steam_path),
@@ -397,12 +471,28 @@ def _detect_owned_games_inner(name_cache_path: Path | None = None) -> dict[str, 
         "owned_count": len(owned_ids),
         "skipped_roots": skipped_roots,
         "needs_name_resolve": [g["appid"] for g in games if str(g.get("name") or "").startswith("Jeu ")],
+        "steam_accounts": cache_meta.get("accounts") or [],
+        "librarycache_empty": bool(cache_meta.get("librarycache_empty")),
+        "hint": hint,
     }
 
 
-def detect_owned_games(name_cache_path: Path | None = None) -> dict[str, Any]:
-    """Return installed + owned Steam games (hard timeout)."""
-    result = _run_with_timeout(lambda: _detect_owned_games_inner(name_cache_path), _DETECT_TIMEOUT, None)
+def detect_owned_games(
+    name_cache_path: Path | None = None,
+    locale: str | None = None,
+    timeout: float | None = None,
+) -> dict[str, Any]:
+    """Return installed + owned Steam games (hard timeout, one retry)."""
+    limit = float(timeout if timeout is not None else _DETECT_TIMEOUT)
+    result: dict[str, Any] | None = None
+    for _ in range(2):
+        result = _run_with_timeout(
+            lambda: _detect_owned_games_inner(name_cache_path, locale),
+            limit,
+            None,
+        )
+        if result is not None:
+            break
     if result is None:
         return {
             "ok": False,
