@@ -29,7 +29,7 @@ Le binaire `GameChangelog.exe` est copié à la racine du projet.
 
 Les jeux suivis et le cache des changelogs sont stockés dans :
 
-`%LOCALAPPDATA%\NewsGameChangelog\`
+`%LOCALAPPDATA%\ChangeLog-Central\`
 
 ## SteamDB
 

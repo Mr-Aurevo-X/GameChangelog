@@ -22,6 +22,8 @@ from window_chrome import WindowChromeMixin, create_tool_window
 
 APP_TITLE = "Game Changelog"
 DEFAULT_ACCENT = "#e03545"
+INSTALL_DIR_NAME = "ChangeLog-Central"
+HUB_SETTINGS_DIR = "PCCommand"
 ENV_ACCENT = "MRAUREVOX_ACCENT"
 ENV_LANG = "MRAUREVOX_LANG"
 REFRESH_WORKERS = 4
@@ -45,25 +47,39 @@ def ui_dir() -> Path:
 
 
 def data_dir() -> Path:
-    local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
-    path = Path(local) / "NewsGameChangelog"
+    path = localappdata_root() / INSTALL_DIR_NAME
     path.mkdir(parents=True, exist_ok=True)
     return path
+
+
+def localappdata_root() -> Path:
+    local = os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")
+    return Path(local)
+
+
+def _settings_paths() -> list[Path]:
+    root = localappdata_root()
+    return [
+        root / HUB_SETTINGS_DIR / "user-settings.json",
+        root / "MrAurevoX" / "user-settings.json",
+        root / "Mr-Aurevo-X" / "user-settings.json",
+    ]
 
 
 def resolve_suite_accent(default: str = DEFAULT_ACCENT) -> str:
     env = (os.environ.get(ENV_ACCENT) or "").strip()
     if env.startswith("#") and len(env) in (4, 7):
         return env
-    path = Path(os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")) / "Mr-Aurevo-X" / "user-settings.json"
-    if path.is_file():
+    for path in _settings_paths():
+        if not path.is_file():
+            continue
         try:
             loaded = json.loads(path.read_text(encoding="utf-8-sig"))
             accent = str((loaded or {}).get("accent") or "").strip()
             if accent.startswith("#") and len(accent) in (4, 7):
                 return accent
         except (OSError, json.JSONDecodeError, TypeError):
-            pass
+            continue
     return default
 
 
@@ -71,15 +87,16 @@ def resolve_suite_language(default: str = "fr") -> str:
     env = (os.environ.get(ENV_LANG) or "").strip().lower()
     if env in ("fr", "en"):
         return env
-    path = Path(os.environ.get("LOCALAPPDATA") or str(Path.home() / "AppData" / "Local")) / "Mr-Aurevo-X" / "user-settings.json"
-    if path.is_file():
+    for path in _settings_paths():
+        if not path.is_file():
+            continue
         try:
             loaded = json.loads(path.read_text(encoding="utf-8-sig"))
             lang = str((loaded or {}).get("language") or "").strip().lower()
             if lang in ("fr", "en"):
                 return lang
         except (OSError, json.JSONDecodeError, TypeError):
-            pass
+            continue
     return default if default in ("fr", "en") else "fr"
 
 

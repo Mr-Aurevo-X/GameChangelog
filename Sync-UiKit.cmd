@@ -1,7 +1,7 @@
 @echo off
 REM Thin wrapper: sync all DevTree UI kits then strip Atelier subtitle for GameChangelog
 setlocal
-set "SYNC=%~dp0..\scripts\Sync-All-UiKit.ps1"
+set "SYNC=%~dp0..\..\scripts\Sync-All-UiKit.ps1"
 if not exist "%SYNC%" (
   echo Missing %SYNC%
   exit /b 1
