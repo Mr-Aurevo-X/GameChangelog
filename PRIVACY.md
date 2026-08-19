@@ -19,7 +19,6 @@ The Suite as a whole is **not** advertised as “100% local”: some modules can
 
 | Component | Why | With whom |
 |-----------|-----|-----------|
-| Hub update check / apply | Optional download of official `Launch-Hub-*.zip` | `api.github.com`, `github.com`, GitHub release asset hosts |
 | Trad-X | Translation you request | Google Translate via `deep_translator` — **text leaves this PC** |
 | RoadWay-X reputation | Opt-in lookup | URLhaus / AbuseIPDB (plus browser links to VirusTotal / Talos) |
 | NetAdmin / NetMap tests | Diagnostics you start | Hosts **you** type |
