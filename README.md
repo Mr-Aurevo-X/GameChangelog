@@ -1,4 +1,4 @@
-﻿# Game Changelog
+# Game Changelog
 
 Distribution **lecture seule**. Pas de pull requests ni d'issues (`CONTRIBUTING.md`). Licence PolyForm Noncommercial 1.0.0. Éditeur : **Mr-Aurevo-X**.
 
@@ -8,13 +8,13 @@ Lancement depuis la racine du tree : `Lancer-GameChangelog.cmd`
 
 Application Windows pour suivre les patch notes de vos jeux Steam.
 
-## FonctionnalitÃ©s
+## Fonctionnalités
 
 - Recherche de jeux sur le Steam Store
 - Liste de jeux suivis
-- RÃ©cupÃ©ration automatique des changelogs au lancement
+- Récupération automatique des changelogs au lancement
 - Fusion des sources Steam News + Steam Events sans doublons
-- Fil chronologique avec dÃ©tail des patch notes
+- Fil chronologique avec détail des patch notes
 
 ## Lancer (SoT)
 
@@ -24,10 +24,10 @@ Lancer.cmd
 
 Windows peut afficher « potentiellement dangereux » : les binaires ne sont pas signés Authenticode (pas de certificat éditeur payant). C'est un avertissement de réputation SmartScreen, pas un verdict antivirus.
 
-`Lancer.cmd` exÃ©cute **`python host\host.py`** quand Python est disponible (sources Ã  jour).
-Sinon fallback sur `GameChangelog.exe` (build PyInstaller â€” relancer `Build.cmd` aprÃ¨s des changements UI/host).
+`Lancer.cmd` exécute **`python host\host.py`** quand Python est disponible (sources à jour).
+Sinon fallback sur `GameChangelog.exe` (build PyInstaller — relancer `Build.cmd` après des changements UI/host).
 
-Ã‰quivalent manuel :
+Équivalent manuel :
 
 ```bash
 pip install -r requirements.txt
@@ -40,19 +40,19 @@ python host/host.py
 Build.cmd
 ```
 
-Le binaire `GameChangelog.exe` est copiÃ© Ã  la racine du projet.
+Le binaire `GameChangelog.exe` est copié à la racine du projet.
 
-## DonnÃ©es locales
+## Données locales
 
-Les jeux suivis et le cache des changelogs sont stockÃ©s dans :
+Les jeux suivis et le cache des changelogs sont stockés dans :
 
 `%LOCALAPPDATA%\ChangeLog-Central\`
 
 ## SteamDB
 
-[SteamDB](https://steamdb.info/) n'expose **pas d'API publique** et interdit le scraping automatisÃ© (rÃ©ponses 403). Son flux RSS patch notes est fortement mis en cache et n'est pas prÃ©vu pour la surveillance automatique.
+[SteamDB](https://steamdb.info/) n'expose **pas d'API publique** et interdit le scraping automatisé (réponses 403). Son flux RSS patch notes est fortement mis en cache et n'est pas prévu pour la surveillance automatique.
 
-L'app rÃ©cupÃ¨re les changelogs via les **API Steam officielles** (News + Events). Un bouton **Â« Voir sur SteamDB Â»** ouvre la page patch notes du jeu dans le navigateur pour consultation manuelle.
+L'app récupère les changelogs via les **API Steam officielles** (News + Events). Un bouton **« Voir sur SteamDB »** ouvre la page patch notes du jeu dans le navigateur pour consultation manuelle.
 ---
 
 Rêvée par **Mr-Aurevo-X**. Cursor a réalisé le rêve.
