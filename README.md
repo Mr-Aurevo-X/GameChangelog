@@ -10,7 +10,16 @@ Application Windows pour suivre les patch notes de vos jeux Steam.
 - Fusion des sources Steam News + Steam Events sans doublons
 - Fil chronologique avec détail des patch notes
 
-## Lancer en développement
+## Lancer (SoT)
+
+```cmd
+Lancer.cmd
+```
+
+`Lancer.cmd` exécute **`python host\host.py`** quand Python est disponible (sources à jour).
+Sinon fallback sur `GameChangelog.exe` (build PyInstaller — relancer `Build.cmd` après des changements UI/host).
+
+Équivalent manuel :
 
 ```bash
 pip install -r requirements.txt
