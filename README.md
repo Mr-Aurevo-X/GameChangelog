@@ -1,5 +1,9 @@
 # Game Changelog
 
+Standalone Lab (comme `Opti/`, `Track/`) — SoT : **`Dev Central Tree/GameChangelog/`**.
+
+Lancement depuis la racine du tree : `Lancer-GameChangelog.cmd`
+
 Application Windows pour suivre les patch notes de vos jeux Steam.
 
 ## Fonctionnalités
