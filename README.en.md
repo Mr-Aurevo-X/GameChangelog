@@ -6,7 +6,17 @@ Windows app to follow Steam game patch notes. Publisher: **Mr-Aurevo-X**.
 
 Read-only distribution: no PRs or issues. License: PolyForm Noncommercial 1.0.0.
 
-Steam News + Events APIs (user-initiated). Local cache: `%LOCALAPPDATA%\ChangeLog-Central\`.
+Steam News + Events APIs (user-initiated).
+
+## Where it installs
+
+| Mode | Location |
+|------|----------|
+| **Release** (`GameChangelog.zip`) | **Portable** folder: extract anywhere, run `GameChangelog.exe` from that folder (keep zip contents together). |
+| **Data** (followed games, cache) | `%LOCALAPPDATA%\ChangeLog-Central\` |
+| **Dev (sources)** | Repo clone + `Lancer.cmd` |
+
+Download: [GameChangelog Releases](https://github.com/Mr-Aurevo-X/GameChangelog/releases).
 
 ```cmd
 Lancer.cmd

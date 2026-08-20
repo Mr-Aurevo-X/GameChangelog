@@ -16,6 +16,16 @@ Application Windows pour suivre les patch notes de vos jeux Steam.
 - Fusion des sources Steam News + Steam Events sans doublons
 - Fil chronologique avec détail des patch notes
 
+## Où s’installe
+
+| Mode | Emplacement |
+|------|-------------|
+| **Release** (`GameChangelog.zip`) | Dossier **portable** : extrayez le zip où vous voulez, lancez `GameChangelog.exe` depuis ce dossier (gardez le contenu du zip ensemble). |
+| **Données** (jeux suivis, cache) | `%LOCALAPPDATA%\ChangeLog-Central\` |
+| **Dev (sources)** | Clone `03_Standalones\GameChangelog\` (ou junction tree) + `Lancer.cmd` / `Lancer-GameChangelog.cmd` à la racine du tree |
+
+Téléchargement : [Releases GameChangelog](https://github.com/Mr-Aurevo-X/GameChangelog/releases).
+
 ## Lancer (SoT)
 
 ```cmd
@@ -44,9 +54,7 @@ Le binaire `GameChangelog.exe` est copié à la racine du projet.
 
 ## Données locales
 
-Les jeux suivis et le cache des changelogs sont stockés dans :
-
-`%LOCALAPPDATA%\ChangeLog-Central\`
+Les jeux suivis et le cache des changelogs sont stockés dans `%LOCALAPPDATA%\ChangeLog-Central\` (voir tableau « Où s’installe » ci-dessus).
 
 ## SteamDB
 
