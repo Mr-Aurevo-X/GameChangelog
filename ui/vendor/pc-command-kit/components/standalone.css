@@ -40,9 +40,9 @@ body:not(.pcd-embed)::before {
   mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
 }
 
-/* Do not demote fixed overlays (matrix boot / resize grips) into body flex -
+/* Do not demote fixed overlays (matrix boot / resize grips / confirm) into body flex -
    that painted an opaque dark bar over the dashboard Volumes row. */
-body:not(.pcd-embed) > *:not(.matrix-boot):not(.hub-resize-edges) {
+body:not(.pcd-embed) > *:not(.matrix-boot):not(.hub-resize-edges):not(.tool-resize-edges):not(.tool-titlebar):not(.confirm-overlay):not(.pcd-confirm-root) {
   position: relative;
   z-index: 1;
 }

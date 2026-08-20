@@ -135,6 +135,12 @@ body.pcd-embed .tool-resize-edges {
   z-index: 100000;
 }
 
+/* Confirm / honesty modals must win over resize grips. */
+body.pcd-confirm-open .tool-resize-edges,
+body.pcd-confirm-open .tool-resize-edge {
+  pointer-events: none !important;
+}
+
 body.frameless:not(.pcd-embed) .tool-resize-edge {
   position: absolute;
   pointer-events: auto;
