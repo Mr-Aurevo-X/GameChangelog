@@ -817,6 +817,7 @@ body.mode-module #view-apps { display: none !important; }
   width: 100%;
 }
 .module-stage iframe {
+  /* Legacy catalogue shell only — hubs H7 do not load iframes at runtime. */
   flex: 1 1 auto;
   width: 100%;
   height: 100%;

@@ -3,7 +3,7 @@
  * Requires pywebview js_api: window_start_drag, window_start_resize,
  * get_window_bounds, set_window_bounds, window_minimize, window_toggle_maximize,
  * window_close.
- * Skips when ?embed=1 / body.pcd-embed (in-hub iframe).
+ * Skips when ?embed=1 / body.pcd-embed (in-hub / embed mode — no iframe required).
  *
  * Resize prefers pointer-driven SetWindowPos (async-bridge safe). WM_NCLBUTTONDOWN
  * alone fails on FormBorderStyle.None / delayed bridge — same as PC Command hub.
