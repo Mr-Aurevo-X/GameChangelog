@@ -220,18 +220,22 @@ async function openDetail(entryId) {
   if (!res?.ok || !res.entry) return;
 
   const entry = res.entry;
-  state.detailUrl = entry.url || "";
-  state.steamdbUrl = entry.steamdb_url || (entry.appid ? `https://steamdb.info/app/${entry.appid}/patchnotes/` : "");
+  state.detailUrl = safeHttpUrl(entry.url || "");
+  state.steamdbUrl = safeHttpUrl(
+    entry.steamdb_url || (entry.appid ? `https://steamdb.info/app/${entry.appid}/patchnotes/` : "")
+  );
   $("detailEmpty").hidden = true;
   $("detailView").hidden = false;
   $("detailGame").textContent = entry.game_name || "";
   $("detailTitle").textContent = entry.title || "";
   $("detailDate").textContent = formatDate(entry.published_at);
   $("detailSource").textContent = entry.source_label || entry.source || "Steam";
+  // content_html is allowlist-sanitized on the host; still only assign trusted fragment.
   $("detailContent").innerHTML = entry.content_html || "<p>Contenu indisponible.</p>";
   const icon = $("detailIcon");
-  if (entry.icon_url) {
-    icon.src = entry.icon_url;
+  const iconUrl = safeHttpUrl(entry.icon_url || "");
+  if (iconUrl) {
+    icon.src = iconUrl;
     icon.hidden = false;
   } else {
     icon.hidden = true;
@@ -248,6 +252,21 @@ function escapeHtml(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
+}
+
+/** Allow only http(s) URLs for window.open / img src. */
+function safeHttpUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "";
+  const lower = raw.toLowerCase();
+  if (!lower.startsWith("http://") && !lower.startsWith("https://")) return "";
+  try {
+    const u = new URL(raw);
+    if (u.protocol !== "http:" && u.protocol !== "https:") return "";
+    return u.href;
+  } catch (_) {
+    return "";
+  }
 }
 
 function renderSearchResults(results) {
@@ -778,11 +797,13 @@ function bindEvents() {
   $("openDdSteamBtn").addEventListener("click", () => window.open("https://downdetector.fr/statut/steam/", "_blank"));
 
   $("openSteamBtn").addEventListener("click", () => {
-    if (state.detailUrl) window.open(state.detailUrl, "_blank");
+    const url = safeHttpUrl(state.detailUrl);
+    if (url) window.open(url, "_blank");
   });
 
   $("openSteamDbBtn").addEventListener("click", () => {
-    if (state.steamdbUrl) window.open(state.steamdbUrl, "_blank");
+    const url = safeHttpUrl(state.steamdbUrl);
+    if (url) window.open(url, "_blank");
   });
 
   document.addEventListener("click", (event) => {

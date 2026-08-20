@@ -10,9 +10,10 @@ import html
 import json
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from html.parser import HTMLParser
 from typing import Any
 from urllib.error import HTTPError, URLError
-from urllib.parse import quote
+from urllib.parse import quote, urlparse
 from urllib.request import Request, urlopen
 
 USER_AGENT = (
@@ -104,6 +105,125 @@ def _event_url(appid: int, event_gid: str | int) -> str:
     return f"https://store.steampowered.com/news/app/{appid}/view/{event_gid}"
 
 
+_SAFE_URL_SCHEMES = ("http://", "https://")
+_ALLOWED_TAGS = frozenset(
+    {
+        "p",
+        "br",
+        "strong",
+        "b",
+        "em",
+        "i",
+        "u",
+        "h1",
+        "h2",
+        "h3",
+        "ul",
+        "ol",
+        "li",
+        "a",
+        "img",
+        "span",
+        "div",
+    }
+)
+_VOID_TAGS = frozenset({"br", "img"})
+
+
+def safe_http_url(url: str | None) -> str:
+    """Return url if http(s) only; else empty. Blocks javascript:, data:, etc."""
+    raw = (url or "").strip()
+    if not raw:
+        return ""
+    lower = raw.lower()
+    if not lower.startswith(_SAFE_URL_SCHEMES):
+        return ""
+    try:
+        parsed = urlparse(raw)
+    except Exception:
+        return ""
+    if parsed.scheme not in ("http", "https"):
+        return ""
+    if not parsed.netloc:
+        return ""
+    return raw
+
+
+def _attr_escape(value: str) -> str:
+    return html.escape(value, quote=True)
+
+
+class _AllowlistSanitizer(HTMLParser):
+    """Strip scripts/events; keep a small allowlist of tags/attrs."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self._parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        name = (tag or "").lower()
+        if name not in _ALLOWED_TAGS:
+            return
+        if name == "a":
+            href = ""
+            for k, v in attrs:
+                if (k or "").lower() == "href":
+                    href = safe_http_url(v or "")
+                    break
+            if href:
+                self._parts.append(
+                    f'<a href="{_attr_escape(href)}" target="_blank" rel="noopener noreferrer">'
+                )
+            else:
+                self._parts.append("<a>")
+            return
+        if name == "img":
+            src = ""
+            for k, v in attrs:
+                if (k or "").lower() == "src":
+                    src = safe_http_url(v or "")
+                    break
+            if src:
+                self._parts.append(f'<img src="{_attr_escape(src)}" alt="" />')
+            return
+        if name in _VOID_TAGS:
+            self._parts.append(f"<{name}>")
+            return
+        self._parts.append(f"<{name}>")
+
+    def handle_endtag(self, tag: str) -> None:
+        name = (tag or "").lower()
+        if name in _ALLOWED_TAGS and name not in _VOID_TAGS:
+            self._parts.append(f"</{name}>")
+
+    def handle_data(self, data: str) -> None:
+        if data:
+            self._parts.append(html.escape(data))
+
+    def handle_entityref(self, name: str) -> None:
+        self._parts.append(f"&{name};")
+
+    def handle_charref(self, name: str) -> None:
+        self._parts.append(f"&#{name};")
+
+    def result(self) -> str:
+        return "".join(self._parts)
+
+
+def sanitize_html_fragment(fragment: str) -> str:
+    """Allowlist-sanitize an HTML fragment for WebView display."""
+    if not fragment:
+        return ""
+    parser = _AllowlistSanitizer()
+    try:
+        parser.feed(fragment)
+        parser.close()
+    except Exception:
+        return html.escape(fragment)
+    out = parser.result().strip()
+    return out or ""
+
+
 def clean_steam_markup(text: str) -> str:
     """Convert Steam BBCode-ish markup to safe HTML for display."""
     if not text:
@@ -111,9 +231,26 @@ def clean_steam_markup(text: str) -> str:
     out = html.unescape(text)
     out = out.replace("\r\n", "\n").replace("\r", "\n")
 
-    # Already HTML fragments from some feeds.
-    if "<p>" in out or "<br" in out or "<img" in out:
-        return out
+    # BBCode → HTML (URLs filtered); raw HTML feeds also go through sanitize.
+    def _url_repl(m: re.Match[str]) -> str:
+        href = safe_http_url(m.group(1))
+        label = html.escape(m.group(2) or href or "")
+        if not href:
+            return label
+        return f'<a href="{_attr_escape(href)}" target="_blank" rel="noopener noreferrer">{label}</a>'
+
+    def _url_bare_repl(m: re.Match[str]) -> str:
+        href = safe_http_url(m.group(1))
+        label = html.escape(m.group(1) or "")
+        if not href:
+            return label
+        return f'<a href="{_attr_escape(href)}" target="_blank" rel="noopener noreferrer">{label}</a>'
+
+    def _img_repl(m: re.Match[str]) -> str:
+        src = safe_http_url(m.group(1))
+        if not src:
+            return ""
+        return f'<img src="{_attr_escape(src)}" alt="" />'
 
     out = re.sub(r"\[/?p\]", lambda m: "</p>" if "/" in m.group(0) else "<p>", out, flags=re.I)
     out = re.sub(r"\[/?b\]", lambda m: "</strong>" if "/" in m.group(0) else "<strong>", out, flags=re.I)
@@ -124,13 +261,13 @@ def clean_steam_markup(text: str) -> str:
     out = re.sub(r"\[/?h3\]", lambda m: "</h3>" if "/" in m.group(0) else "<h3>", out, flags=re.I)
     out = re.sub(r"\[/?list\]", lambda m: "</ul>" if "/" in m.group(0) else "<ul>", out, flags=re.I)
     out = re.sub(r"\[\*\]", "<li>", out, flags=re.I)
-    out = re.sub(r"\[url=([^\]]+)\]([^\[]*)\[/url\]", r'<a href="\1" target="_blank" rel="noopener">\2</a>', out, flags=re.I)
-    out = re.sub(r"\[url\]([^\[]*)\[/url\]", r'<a href="\1" target="_blank" rel="noopener">\1</a>', out, flags=re.I)
-    out = re.sub(r"\[img\]([^\[]*)\[/img\]", r'<img src="\1" alt="" />', out, flags=re.I)
+    out = re.sub(r"\[url=([^\]]+)\]([^\[]*)\[/url\]", _url_repl, out, flags=re.I)
+    out = re.sub(r"\[url\]([^\[]*)\[/url\]", _url_bare_repl, out, flags=re.I)
+    out = re.sub(r"\[img\]([^\[]*)\[/img\]", _img_repl, out, flags=re.I)
     out = re.sub(r"\n{2,}", "</p><p>", out)
     if not out.startswith("<"):
         out = f"<p>{out}</p>"
-    return out
+    return sanitize_html_fragment(out)
 
 
 def _is_patch_tags(tags: Any) -> bool:
@@ -210,7 +347,7 @@ def fetch_news_entries(appid: int, *, count: int = 50, patch_only: bool = False)
                 "appid": appid,
                 "title": title,
                 "published_at": int(item.get("date") or 0),
-                "url": str(item.get("url") or _steam_store_url(appid)),
+                "url": safe_http_url(str(item.get("url") or "")) or _steam_store_url(appid),
                 "source": "steam_news_patch" if is_patch else "steam_news",
                 "source_label": "Steam News",
                 "is_patch": bool(is_patch),
