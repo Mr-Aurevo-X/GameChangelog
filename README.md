@@ -5,7 +5,7 @@
 Suis les **patch notes** de tes jeux Steam : fil d’actus, favoris, notes de bugs, statut des serveurs.  
 **Gratuit** · **sans compte** · **tes listes restent sur ton PC**
 
-![GameChangelog](docs/screenshots/accueil.png)
+![GameChangelog](docs/screenshots/accueil-ui.png)
 
 ## Ce que ça fait
 

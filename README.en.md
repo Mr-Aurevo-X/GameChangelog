@@ -5,7 +5,7 @@
 Follow **Steam patch notes** for your games: update feed, favorites, bug notes, server status.  
 **Free** · **no account** · **your lists stay on this PC**
 
-![GameChangelog](docs/screenshots/accueil.png)
+![GameChangelog](docs/screenshots/accueil-ui.png)
 
 ## What it does
 
