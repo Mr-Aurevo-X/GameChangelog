@@ -9,6 +9,8 @@ Le projet est développé exclusivement par le propriétaire (**inner-source fer
 
 Toute PR ou issue sera **fermée sans relecture**. Merci de ne pas envoyer de correctifs ni de rapports ici.
 
+Exception : une **vulnérabilité** se signale uniquement via une [advisory privée](https://github.com/Mr-Aurevo-X/GameChangelog/security/advisories/new) — voir `SECURITY.md`.
+
 Licence : PolyForm Noncommercial 1.0.0 (`LICENSE`). Marque : `TRADEMARK.md`.
 
 ---

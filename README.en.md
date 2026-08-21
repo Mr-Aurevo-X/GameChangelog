@@ -44,7 +44,7 @@ In **About**, you can enable a GitHub version check (read-only). **Nothing downl
 
 **https://github.com/Mr-Aurevo-X/GameChangelog**
 
-A fork or copy elsewhere is not my version. Software as-is, no warranty — see `LICENSE` and `PRIVACY.md`.
+A fork or copy elsewhere is not my version. Software as-is, no warranty — see `LICENSE`, `PRIVACY.md` and `SECURITY.md`.
 
 ## Support (optional)
 

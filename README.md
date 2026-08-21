@@ -44,7 +44,7 @@ Dans **À propos**, tu peux activer une vérif. de nouvelle version sur GitHub (
 
 **https://github.com/Mr-Aurevo-X/GameChangelog**
 
-Un fork ou une copie ailleurs n’est pas ma version. Logiciel tel quel, sans garantie — voir `LICENSE` et `PRIVACY.md`.
+Un fork ou une copie ailleurs n’est pas ma version. Logiciel tel quel, sans garantie — voir `LICENSE`, `PRIVACY.md` et `SECURITY.md`.
 
 ## Soutien (optionnel)
 
