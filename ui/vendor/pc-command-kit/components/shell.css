@@ -1,23 +1,24 @@
 /* PC Command Dash — cybersecurity / command-center energy, brand #e03545 */
 
 :root {
-  --bg: #06070c;
-  --panel: #0e1118;
-  --panel2: #12161f;
-  --text: #eef2f8;
-  --muted: #8490a6;
+  /* Default = Void Glow (norme UI) — do not revert to legacy pc-command #06070c */
+  --bg: #030304;
+  --panel: #0a0a0c;
+  --panel2: #101012;
+  --text: #eef1f6;
+  --muted: #8b94a6;
   --accent: #e03545;
-  --accent-soft: rgba(224, 53, 69, .14);
-  --cyan: #3ec7ff;
-  --cyan-soft: rgba(62, 199, 255, .12);
+  --accent-soft: rgba(224, 53, 69, .16);
+  --cyan: #6a9bb8;
+  --cyan-soft: rgba(106, 155, 184, .12);
   --ok: #3dd68c;
   --ok-soft: rgba(61, 214, 140, .12);
-  --warn: #f0a33a;
-  --warn-soft: rgba(240, 163, 58, .14);
-  --line: rgba(255, 255, 255, .08);
-  --glow-red: 0 0 18px rgba(224, 53, 69, .28);
-  --glow-cyan: 0 0 16px rgba(62, 199, 255, .22);
-  --glow-amber: 0 0 16px rgba(240, 163, 58, .22);
+  --warn: #e0a84a;
+  --warn-soft: rgba(224, 168, 74, .14);
+  --line: rgba(255, 255, 255, .06);
+  --glow-red: 0 0 22px rgba(224, 53, 69, .42);
+  --glow-cyan: 0 0 16px rgba(106, 155, 184, .28);
+  --glow-amber: 0 0 16px rgba(224, 168, 74, .22);
   --glow-green: 0 0 14px rgba(61, 214, 140, .2);
 }
 
@@ -28,10 +29,10 @@ body {
   background-color: var(--bg);
   background-image:
     radial-gradient(1100px 620px at 8% -8%, rgba(224, 53, 69, .42), transparent 55%),
-    radial-gradient(900px 520px at 95% 5%, rgba(62, 199, 255, .22), transparent 50%),
-    radial-gradient(800px 480px at 55% 110%, rgba(240, 163, 58, .16), transparent 55%),
+    radial-gradient(900px 520px at 95% 5%, rgba(106, 155, 184, .22), transparent 50%),
+    radial-gradient(800px 480px at 55% 110%, rgba(224, 168, 74, .16), transparent 55%),
     radial-gradient(600px 400px at 40% 40%, rgba(61, 214, 140, .07), transparent 50%),
-    linear-gradient(165deg, #0c1018 0%, #06070c 45%, #0a0c12 100%);
+    linear-gradient(165deg, #0a0a0c 0%, #030304 45%, #020203 100%);
   background-attachment: fixed;
   font-family: var(--font-ui);
   overflow-x: hidden;
@@ -43,7 +44,7 @@ body::before {
   opacity: .35;
   background-image:
     linear-gradient(rgba(224, 53, 69, .04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(62, 199, 255, .03) 1px, transparent 1px);
+    linear-gradient(90deg, rgba(106, 155, 184, .03) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
 }
@@ -824,7 +825,7 @@ body.mode-module #view-apps { display: none !important; }
   min-height: 0;
   border: 0;
   display: block;
-  background: var(--bg, #06070c);
+  background: var(--bg, #030304);
 }
 .module-empty {
   padding: 2.5rem 1.5rem; text-align: center; color: var(--muted);
