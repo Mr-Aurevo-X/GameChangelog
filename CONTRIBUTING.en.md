@@ -2,7 +2,7 @@
 
 [Français](CONTRIBUTING.md) · [English](CONTRIBUTING.en.md)
 
-This repository is a **read-only private distribution**.
+This repository is a **read-only public distribution**.
 
 The project is developed exclusively by the owner (**closed inner-source**).  
 **No** pull requests, **no** issues, and **no** external contributions are requested, wanted, or authorized.

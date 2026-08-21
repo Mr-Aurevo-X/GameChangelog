@@ -11,6 +11,8 @@ const state = {
   selectedEntryId: null,
   patchOnly: false,
   favoritesOnly: false,
+  showHidden: false,
+  watchlistQuery: "",
   activeTab: "feed",
   searchTimer: null,
   refreshTimer: null,
@@ -199,6 +201,28 @@ async function loadWatchlist() {
   renderWatchlist();
 }
 
+function hasPlaceholderNames() {
+  return state.watchlist.some((g) => /^Jeu\s+\d+$/i.test(String(g.name || "")));
+}
+
+async function resolvePlaceholderNames() {
+  if (!hasPlaceholderNames()) return 0;
+  const a = api();
+  if (!a || typeof a.resolve_placeholder_names !== "function") return 0;
+  showLoading(true, t("loadingNames"), 18);
+  try {
+    const res = await a.resolve_placeholder_names();
+    if (res?.ok && Number(res.updated || 0) > 0) {
+      await loadWatchlist();
+    }
+    return Number(res?.updated || 0);
+  } catch (_) {
+    return 0;
+  } finally {
+    showLoading(false);
+  }
+}
+
 async function loadFeed() {
   const res = await api().get_feed({
     appid: state.selectedAppid,
@@ -211,15 +235,50 @@ async function loadFeed() {
   renderFeed();
 }
 
+function watchlistQuery() {
+  return String(state.watchlistQuery || "").trim().toLowerCase();
+}
+
+function matchesWatchlistQuery(game, q) {
+  if (!q) return true;
+  const name = String(game.name || "").toLowerCase();
+  const appid = String(game.appid || "");
+  return name.includes(q) || appid.includes(q);
+}
+
+function visibleWatchlist() {
+  const hidden = (g) => Number(g.hidden || 0) === 1;
+  const q = watchlistQuery();
+  let list;
+  if (state.showHidden) list = state.watchlist.filter(hidden);
+  else if (state.favoritesOnly) {
+    list = state.watchlist.filter((g) => Number(g.favorite || 0) === 1 && !hidden(g));
+  } else {
+    list = state.watchlist.filter((g) => !hidden(g));
+  }
+  if (!q) return list;
+  return list.filter((g) => matchesWatchlistQuery(g, q));
+}
+
 function renderWatchlist() {
   const root = $("watchlist");
   if (!root) return;
-  const visible = state.favoritesOnly
-    ? state.watchlist.filter((g) => Number(g.favorite || 0) === 1)
-    : state.watchlist;
+  const hiddenGames = state.watchlist.filter((g) => Number(g.hidden || 0) === 1);
+  const hiddenWrap = $("hiddenToggleWrap");
+  const hiddenCountEl = $("hiddenCount");
+  if (hiddenCountEl) hiddenCountEl.textContent = String(hiddenGames.length);
+  if (hiddenWrap) hiddenWrap.hidden = hiddenGames.length === 0 && !state.showHidden;
+  const visible = visibleWatchlist();
   $("gameCount").textContent = String(visible.length);
   if (!visible.length) {
-    root.innerHTML = `<p class="empty-hint">${state.favoritesOnly ? t("emptyFavorites") : t("emptyWatchlist")}</p>`;
+    const emptyKey = watchlistQuery()
+      ? "emptyFilter"
+      : state.showHidden
+        ? "emptyHidden"
+        : state.favoritesOnly
+          ? "emptyFavorites"
+          : "emptyWatchlist";
+    root.innerHTML = `<p class="empty-hint">${t(emptyKey)}</p>`;
     return;
   }
 
@@ -229,6 +288,7 @@ function renderWatchlist() {
       const unread = Number(game.unread_count || 0);
       const installed = Number(game.installed || 0) === 1;
       const fav = Number(game.favorite || 0) === 1;
+      const isHidden = Number(game.hidden || 0) === 1;
       const bugs = Number(game.open_bugs || 0);
       const unreadLabel = [
         installed ? (unread > 0 ? t("unreadNew", { n: unread }) : t("installed")) : t("notInstalled"),
@@ -237,14 +297,17 @@ function renderWatchlist() {
       const icon = game.icon_url
         ? `<img src="${escapeHtml(game.icon_url)}" alt="" />`
         : '<div class="brand-icon" style="width:40px;height:40px;font-size:.8rem;">GC</div>';
+      const hideTitle = isHidden ? t("unhideTitle") : t("hideTitle");
+      const hideMark = isHidden ? "↩" : "⊘";
       return `
-        <div class="game-item ${active}" data-appid="${game.appid}">
+        <div class="game-item ${active}${isHidden ? " is-hidden" : ""}" data-appid="${game.appid}">
           ${icon}
           <div>
             <strong>${escapeHtml(game.name)}</strong>
             <small>${unreadLabel}</small>
           </div>
           <button class="fav-btn ${fav ? "on" : ""}" data-fav="${game.appid}" title="${escapeHtml(t("favTitle"))}">${fav ? "★" : "☆"}</button>
+          <button class="hide-btn" data-hide="${game.appid}" title="${escapeHtml(hideTitle)}">${hideMark}</button>
           <button class="game-remove" data-remove="${game.appid}" title="${escapeHtml(t("removeTitle"))}">✕</button>
         </div>
       `;
@@ -253,7 +316,7 @@ function renderWatchlist() {
 
   root.querySelectorAll(".game-item").forEach((item) => {
     item.addEventListener("click", async (event) => {
-      if (event.target.closest("[data-remove]") || event.target.closest("[data-fav]")) return;
+      if (event.target.closest("[data-remove]") || event.target.closest("[data-fav]") || event.target.closest("[data-hide]")) return;
       const appid = Number(item.dataset.appid);
       const same = state.selectedAppid === appid;
       state.selectedAppid = same ? null : appid;
@@ -286,6 +349,20 @@ function renderWatchlist() {
     });
   });
 
+  root.querySelectorAll("[data-hide]").forEach((btn) => {
+    btn.addEventListener("click", async (event) => {
+      event.stopPropagation();
+      const appid = Number(btn.dataset.hide);
+      const game = state.watchlist.find((g) => Number(g.appid) === appid);
+      const next = !(Number(game?.hidden || 0) === 1);
+      await api().set_hidden(appid, next);
+      if (next && state.selectedAppid === appid) state.selectedAppid = null;
+      await loadWatchlist();
+      await loadFeed();
+      await loadBugs();
+    });
+  });
+
   root.querySelectorAll("[data-remove]").forEach((btn) => {
     btn.addEventListener("click", async (event) => {
       event.stopPropagation();
@@ -305,7 +382,7 @@ function renderFeed() {
   const countEl = $("feedCount");
   if (countEl) countEl.textContent = t("feedCount", { n: state.feed.length });
   if (!state.feed.length) {
-    const emptyKey = state.watchlist.length ? "emptyFeedNone" : "emptyFeedList";
+    const emptyKey = visibleWatchlist().length ? "emptyFeedNone" : "emptyFeedList";
     root.innerHTML = `<p class="empty-hint">${t(emptyKey)}</p>`;
     return;
   }
@@ -681,8 +758,9 @@ async function importSteamLibrary(force = false) {
     return { ok: true, imported: 0 };
   }
 
-  const res = await waitForImport(12000);
+  const res = await waitForImport(45000);
   await loadWatchlist();
+  await resolvePlaceholderNames();
 
   if (!res?.ok) {
     showLoading(false);
@@ -1069,6 +1147,22 @@ function bindEvents() {
 
   $("favoritesOnlyToggle").addEventListener("change", async (event) => {
     state.favoritesOnly = event.target.checked;
+    if (state.favoritesOnly) {
+      state.showHidden = false;
+      const hiddenToggle = $("hiddenOnlyToggle");
+      if (hiddenToggle) hiddenToggle.checked = false;
+    }
+    renderWatchlist();
+    await loadFeed();
+  });
+
+  $("hiddenOnlyToggle")?.addEventListener("change", async (event) => {
+    state.showHidden = event.target.checked;
+    if (state.showHidden) {
+      state.favoritesOnly = false;
+      const favToggle = $("favoritesOnlyToggle");
+      if (favToggle) favToggle.checked = false;
+    }
     renderWatchlist();
     await loadFeed();
   });
@@ -1092,6 +1186,11 @@ function bindEvents() {
 
   $("syncLibraryBtn").addEventListener("click", async () => {
     await importSteamLibrary(true);
+  });
+
+  $("watchlistFilter")?.addEventListener("input", (event) => {
+    state.watchlistQuery = event.target.value || "";
+    renderWatchlist();
   });
 
   $("addAppIdForm")?.addEventListener("submit", async (event) => {
@@ -1261,6 +1360,7 @@ async function boot() {
   await waitForApi();
   await loadSettings();
   await loadWatchlist();
+  await resolvePlaceholderNames();
   await loadFeed();
   await updateLastSync();
 
@@ -1268,6 +1368,7 @@ async function boot() {
   if (!state.watchlist.length) {
     maybeImportSteamLibraryOnFirstLaunch().then(async () => {
       await loadWatchlist();
+      await resolvePlaceholderNames();
       await loadFeed();
     });
   } else {

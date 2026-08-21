@@ -89,7 +89,14 @@
       <aside class="sidebar">
         <div class="sidebar-head">
           <h2 data-i18n="myGames">Mes jeux</h2>
-          <span id="gameCount" class="pill">0</span>
+          <div class="sidebar-tools">
+            <label class="filter-toggle" id="hiddenToggleWrap" hidden>
+              <input id="hiddenOnlyToggle" type="checkbox" />
+              <span data-i18n="filterHidden">Cachés</span>
+              <span id="hiddenCount" class="pill hidden-pill">0</span>
+            </label>
+            <span id="gameCount" class="pill">0</span>
+          </div>
         </div>
         <form id="addAppIdForm" class="add-appid-form">
           <label class="field add-appid-field">
@@ -101,6 +108,10 @@
           </label>
           <p class="muted add-appid-hint" data-i18n="addAppIdHint">Pas besoin d’avoir le jeu dans votre bibliothèque Steam.</p>
         </form>
+        <label class="field watchlist-filter-field">
+          <span data-i18n="filterListLabel">Filtrer ma liste</span>
+          <input id="watchlistFilter" type="search" data-i18n-placeholder="filterListPlaceholder" placeholder="Nom ou AppID…" autocomplete="off" />
+        </label>
         <div id="watchlist" class="watchlist">
           <p class="empty-hint" data-i18n="emptyWatchlist">Recherchez un jeu ou saisissez un AppID Steam.</p>
         </div>

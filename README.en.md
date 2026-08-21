@@ -2,66 +2,49 @@
 
 # GameChangelog
 
-Steam patch notes, favorites, bugs, status / Downdetector.  
-**Free for life** · **as local as possible** · **Mr-Aurevo-X**
+Follow **Steam patch notes** for your games: update feed, favorites, bug notes, server status.  
+**Free** · **no account** · **your lists stay on this PC**
 
-## Preview
+![GameChangelog](docs/screenshots/accueil.png)
 
-![GameChangelog — update feed](docs/screenshots/accueil.png)
+## What it does
 
-## Features
-
-| Surface | Role |
-|---------|------|
-| **Updates** | Steam News + Events feed, full changelog, mark all read |
-| **My games** | Local watchlist — Store search or AppID, even outside your library |
-| **Bugs** | Per-game local notes + Steam Discussions link |
-| **Status / Downdetector** | Steam services + Downdetector link if you think servers are down |
-
-## Why this app
-
-- Free for life — no subscription, no account
-- As local as possible — **no telemetry**, watchlist stays on this machine
-- Network only when you act: Steam (search, news, sync, status) · SteamDB (click) · GitHub update check **opt-out** in About
-- UI **FR | EN**
-- Void Glow chrome — not a marketing kicker
+- Lists your games (local Steam library, or any game you add)
+- Shows Steam updates (news + events)
+- Filter by name / AppID, favorites, or **hidden** games (kept out of the feed)
+- Local bug notes + Steam Discussions link
+- Steam / Downdetector status if you think servers are down
+- French | English
 
 ## On your PC
 
+Extract `GameChangelog.zip`, run `GameChangelog.exe` (keep the folder together).
+
 | What | Where |
 |------|-------|
-| **App** | Extract `GameChangelog.zip`, run `GameChangelog.exe` (keep zip contents together) |
-| Data | `%LOCALAPPDATA%\ChangeLog-Central\` (watchlist, cache, bugs) |
-| Prefs | `%LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json` (shared — language, update check) |
+| The app | The folder you extracted the zip into |
+| Games, cache, bugs | `%LOCALAPPDATA%\ChangeLog-Central\` |
+| Language and update check | `%LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json` *(shared with other Mr-Aurevo-X apps — don’t delete it if you still use them)* |
 
-[Download the release](https://github.com/Mr-Aurevo-X/GameChangelog/releases) · **v1.0.2**
+[Download](https://github.com/Mr-Aurevo-X/GameChangelog/releases) · **v1.0.3**
 
-## Launch
+## First launch
 
-1. Download the zip from the Releases page above  
-2. Extract anywhere  
-3. Run `GameChangelog.exe`
+1. Download the zip, extract, run `GameChangelog.exe`
+2. If Steam is installed and you’ve signed in once: your games fill in, then names and patch notes
+3. Otherwise: **Sync Steam**, or search a game at the top, or enter an AppID (e.g. `570`) — the game doesn’t need to be installed
 
-Dev (Python): `Lancer.cmd` at the clone root.
+Windows may show a warning: the binary is **not signed**. That is SmartScreen, not a “virus” verdict.
 
-Windows may show a warning: binaries are **not signed**. That is **SmartScreen**, not an antivirus “virus” verdict.
+## App updates
 
-## Updates
+In **About**, you can enable a GitHub version check (read-only). **Nothing downloads by itself.** You grab the zip from Releases if you want it.
 
-Same contract as the hubs / SoftTunes: optional GitHub **Latest** read, **no** in-app download or install. Toggle in About (`checkGithubUpdates`).
-
-## SteamDB
-
-[SteamDB](https://steamdb.info/) has **no** public API. The app reads official **Steam APIs** (News + Events). A button opens the SteamDB patch-notes page in the browser — manual lookup only.
-
-## Official version only
-
-The only build I stand behind:
+## Official build only
 
 **https://github.com/Mr-Aurevo-X/GameChangelog**
 
-A fork or modified copy elsewhere is **not** my version — I am not responsible for it.  
-Software **as is**, without warranty — see `LICENSE`, `CGU.md` / `TERMS.md`, and `PRIVACY.md`.
+A fork or copy elsewhere is not my version. Software as-is, no warranty — see `LICENSE` and `PRIVACY.md`.
 
 ## Support (optional)
 

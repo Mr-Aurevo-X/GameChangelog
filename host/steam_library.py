@@ -10,6 +10,7 @@ import json
 import os
 import re
 import threading
+from datetime import datetime, timezone
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
@@ -19,7 +20,9 @@ from urllib.request import Request, urlopen
 _ROOT_TIMEOUT = 1.5
 _DETECT_TIMEOUT = float(os.environ.get("GC_STEAM_DETECT_TIMEOUT", "12"))
 _NAME_TIMEOUT = 8.0
-_NAME_WORKERS = 8
+_NAME_WORKERS = 4
+_APPLIST_URL = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"
+_APPLIST_TTL_SEC = 7 * 24 * 3600
 
 _SKIP_APPIDS = {
     228980,
@@ -327,6 +330,56 @@ def _owned_appids_from_librarycache(steam_path: Path) -> tuple[list[int], dict[s
     return sorted(merged), meta
 
 
+def _applist_cache_path(name_cache_path: Path | None) -> Path | None:
+    if name_cache_path is None:
+        return None
+    return name_cache_path.parent / "steam_applist.json"
+
+
+def _load_app_list_map(cache_path: Path | None) -> dict[int, str]:
+    """One Steam GetAppList dump (cached) — avoids 399 rate-limited appdetails calls."""
+    path = _applist_cache_path(cache_path)
+    now = datetime.now(timezone.utc).timestamp()
+    if path is not None and path.is_file():
+        try:
+            raw = json.loads(path.read_text(encoding="utf-8"))
+            fetched = float((raw or {}).get("fetched_at") or 0)
+            apps = (raw or {}).get("apps") or {}
+            if isinstance(apps, dict) and apps and (now - fetched) < _APPLIST_TTL_SEC:
+                return {int(k): str(v) for k, v in apps.items() if str(v).strip()}
+        except (OSError, json.JSONDecodeError, TypeError, ValueError):
+            pass
+
+    req = Request(
+        _APPLIST_URL,
+        headers={"User-Agent": USER_AGENT, "Accept": "application/json"},
+    )
+    try:
+        with urlopen(req, timeout=25) as resp:
+            payload = json.loads(resp.read().decode("utf-8", errors="replace"))
+        rows = ((payload.get("applist") or {}).get("apps") or [])
+        mapping: dict[int, str] = {}
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            try:
+                appid = int(row.get("appid") or 0)
+            except (TypeError, ValueError):
+                continue
+            name = str(row.get("name") or "").strip()
+            if appid > 0 and name:
+                mapping[appid] = name
+        if path is not None and mapping:
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(
+                json.dumps({"fetched_at": now, "apps": {str(k): v for k, v in mapping.items()}}, ensure_ascii=False),
+                encoding="utf-8",
+            )
+        return mapping
+    except (HTTPError, URLError, TimeoutError, OSError, json.JSONDecodeError, TypeError):
+        return {}
+
+
 def _load_name_cache(cache_path: Path) -> dict[str, str]:
     if not cache_path.is_file():
         return {}
@@ -377,16 +430,22 @@ def resolve_game_names(
     cache_path: Path | None = None,
     locale: str | None = None,
 ) -> dict[int, str]:
-    """Resolve Steam app names with local cache + parallel store lookups."""
+    """Resolve Steam app names: local cache, GetAppList dump, then appdetails leftovers."""
     cache = _load_name_cache(cache_path) if cache_path else {}
+    catalog = _load_app_list_map(cache_path)
     result: dict[int, str] = {}
     missing: list[int] = []
     for appid in appids:
         key = str(appid)
-        if key in cache and cache[key]:
+        if key in cache and cache[key] and not str(cache[key]).startswith("Jeu "):
             result[appid] = cache[key]
-        else:
-            missing.append(appid)
+            continue
+        catalog_name = catalog.get(int(appid))
+        if catalog_name:
+            result[appid] = catalog_name
+            cache[key] = catalog_name
+            continue
+        missing.append(appid)
 
     if missing:
         with ThreadPoolExecutor(max_workers=min(_NAME_WORKERS, len(missing))) as pool:
@@ -401,7 +460,7 @@ def resolve_game_names(
                     result[appid] = name
                     cache[str(appid)] = name
 
-    if cache_path and missing:
+    if cache_path and (missing or result):
         _save_name_cache(cache_path, cache)
     return result
 
@@ -437,14 +496,16 @@ def _detect_owned_games_inner(
     ) or ([], {"librarycache_empty": True, "accounts": [], "hint": None})
     if not isinstance(owned_ids, list):
         owned_ids = []
+    name_cache = _load_name_cache(name_cache_path) if name_cache_path else {}
     for appid in owned_ids:
         if appid in games_by_id:
             continue
         if not _is_trackable_game(appid):
             continue
+        cached = str(name_cache.get(str(appid)) or "").strip()
         games_by_id[appid] = {
             "appid": appid,
-            "name": f"Jeu {appid}",
+            "name": cached if cached and not cached.startswith("Jeu ") else f"Jeu {appid}",
             "icon_url": _icon_url(appid),
             "store_url": _store_url(appid),
             "installed": False,

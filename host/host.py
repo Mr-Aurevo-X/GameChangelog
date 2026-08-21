@@ -294,6 +294,12 @@ class Api(WindowChromeMixin):
         except Exception as exc:
             return {"ok": False, "error": str(exc)}
 
+    def set_hidden(self, appid: int, hidden: bool = True) -> dict[str, Any]:
+        try:
+            return self._store.set_hidden(int(appid), bool(hidden))
+        except Exception as exc:
+            return {"ok": False, "error": str(exc)}
+
     def get_bugs(self, appid: int | None = None) -> dict[str, Any]:
         try:
             aid = None if appid in (None, "", 0, "0") else int(appid)
@@ -334,7 +340,11 @@ class Api(WindowChromeMixin):
     def get_status_dashboard(self) -> dict[str, Any]:
         try:
             steam = check_steam_services()
-            games = self._store.get_watchlist()
+            games = [
+                g
+                for g in self._store.get_watchlist()
+                if int(g.get("hidden") or 0) != 1
+            ]
             # Prefer favorites + installed for the status list.
             preferred = [g for g in games if int(g.get("favorite") or 0) == 1 or int(g.get("installed") or 0) == 1]
             if not preferred:
@@ -519,15 +529,40 @@ class Api(WindowChromeMixin):
         except Exception:
             pass
 
+    def resolve_placeholder_names(self) -> dict[str, Any]:
+        """Fill 'Jeu 123' rows from Steam GetAppList (cached) + leftover appdetails."""
+        try:
+            need = [
+                int(g["appid"])
+                for g in self._store.get_watchlist()
+                if str(g.get("name") or "").startswith("Jeu ")
+            ]
+            if not need:
+                return {"ok": True, "updated": 0, "pending": 0}
+            names = resolve_game_names(
+                need,
+                data_dir() / "steam_names.json",
+                locale=resolve_suite_language(),
+            )
+            updated = self._store.update_game_names(names) if names else 0
+            pending = max(0, len(need) - len(names))
+            return {"ok": True, "updated": int(updated), "pending": pending}
+        except Exception as exc:
+            return {"ok": False, "error": str(exc), "updated": 0}
+
     def refresh_all(self, installed_only: bool = False) -> dict[str, Any]:
         try:
             installed_only = bool(installed_only)
-            games = self._store.get_watchlist()
+            games = [
+                g
+                for g in self._store.get_watchlist()
+                if int(g.get("hidden") or 0) != 1
+            ]
             if installed_only:
-                games = [g for g in games if int(g.get("installed") or 0) == 1]
+                installed = [g for g in games if int(g.get("installed") or 0) == 1]
                 # Fallback if installed flags are missing (old DB)
-                if not games:
-                    games = self._store.get_watchlist()
+                if installed:
+                    games = installed
             appids = [int(g["appid"]) for g in games]
             if not appids:
                 self._set_refresh_state(

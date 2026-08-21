@@ -76,6 +76,8 @@ class GameStore:
                     conn.execute("ALTER TABLE games ADD COLUMN installed INTEGER NOT NULL DEFAULT 0")
                 if "favorite" not in cols:
                     conn.execute("ALTER TABLE games ADD COLUMN favorite INTEGER NOT NULL DEFAULT 0")
+                if "hidden" not in cols:
+                    conn.execute("ALTER TABLE games ADD COLUMN hidden INTEGER NOT NULL DEFAULT 0")
 
                 conn.executescript(
                     """
@@ -104,12 +106,13 @@ class GameStore:
                     """
                     SELECT g.appid, g.name, g.icon_url, g.store_url, g.added_at, g.installed,
                            COALESCE(g.favorite, 0) AS favorite,
+                           COALESCE(g.hidden, 0) AS hidden,
                            COUNT(c.entry_id) AS total_entries,
                            SUM(CASE WHEN c.is_read = 0 THEN 1 ELSE 0 END) AS unread_count,
                            (SELECT COUNT(*) FROM bug_reports b WHERE b.appid = g.appid AND b.status = 'open') AS open_bugs
                     FROM games g
                     LEFT JOIN changelogs c ON c.appid = g.appid
-                    GROUP BY g.appid, g.name, g.icon_url, g.store_url, g.added_at, g.installed, g.favorite
+                    GROUP BY g.appid, g.name, g.icon_url, g.store_url, g.added_at, g.installed, g.favorite, g.hidden
                     ORDER BY COALESCE(g.favorite, 0) DESC, g.installed DESC, g.name COLLATE NOCASE
                     """
                 ).fetchall()
@@ -124,12 +127,23 @@ class GameStore:
                 )
         return {"ok": True}
 
+    def set_hidden(self, appid: int, hidden: bool) -> dict[str, Any]:
+        with self._lock:
+            with self._connect() as conn:
+                conn.execute(
+                    "UPDATE games SET hidden = ? WHERE appid = ?",
+                    (1 if hidden else 0, int(appid)),
+                )
+        return {"ok": True}
+
     def get_bugs(self, appid: int | None = None) -> list[dict[str, Any]]:
         clauses = ["1=1"]
         params: list[Any] = []
         if appid is not None:
             clauses.append("b.appid = ?")
             params.append(int(appid))
+        else:
+            clauses.append("COALESCE(g.hidden, 0) = 0")
         where = " AND ".join(clauses)
         sql = f"""
             SELECT b.*, g.name AS game_name, g.icon_url
@@ -196,6 +210,8 @@ class GameStore:
             clauses.append("c.is_patch = 1")
         if favorites_only:
             clauses.append("COALESCE(g.favorite, 0) = 1")
+        if appid is None:
+            clauses.append("COALESCE(g.hidden, 0) = 0")
         where = " AND ".join(clauses)
         sql = f"""
             SELECT c.entry_id, c.fingerprint, c.appid, g.name AS game_name, g.icon_url,
@@ -370,6 +386,9 @@ class GameStore:
         if favorites_only:
             join = " JOIN games g ON g.appid = c.appid"
             clauses.append("COALESCE(g.favorite, 0) = 1")
+        if appid is None or int(appid) <= 0:
+            join = " JOIN games g ON g.appid = c.appid"
+            clauses.append("COALESCE(g.hidden, 0) = 0")
         where = " AND ".join(clauses)
         sql = f"UPDATE changelogs SET is_read = 1 WHERE entry_id IN (SELECT c.entry_id FROM changelogs c{join} WHERE {where})"
         with self._lock:

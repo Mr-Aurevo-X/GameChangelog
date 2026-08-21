@@ -2,66 +2,49 @@
 
 # GameChangelog
 
-Patch notes Steam, favoris, bugs, statut / Downdetector.  
-**Gratuit à vie** · **autant local que possible** · **Mr-Aurevo-X**
+Suis les **patch notes** de tes jeux Steam : fil d’actus, favoris, notes de bugs, statut des serveurs.  
+**Gratuit** · **sans compte** · **tes listes restent sur ton PC**
 
-## Aperçu
+![GameChangelog](docs/screenshots/accueil.png)
 
-![GameChangelog — fil des mises à jour](docs/screenshots/accueil.png)
+## Ce que ça fait
 
-## Fonctionnalités
-
-| Surface | Rôle |
-|---------|------|
-| **Mises à jour** | Fil Steam News + Events, détail du changelog, tout lire |
-| **Mes jeux** | Watchlist locale — recherche Store ou AppID, même hors bibliothèque |
-| **Bugs** | Notes locales par jeu + lien Discussions Steam |
-| **Statut / Downdetector** | Services Steam + lien Downdetector si tu penses que c’est down |
-
-## Pourquoi cette app
-
-- Gratuit à vie — pas d’abonnement, pas de compte
-- Autant local que possible — **pas de télémétrie**, watchlist sur cette machine
-- Réseau seulement si tu agis : Steam (recherche, news, sync, statut) · SteamDB (clic) · vérif. maj GitHub **désactivable** dans À propos
-- Interface **FR | EN**
-- Void Glow — chrome partagé, pas un kicker marketing
+- Liste tes jeux (bibliothèque Steam locale, ou un jeu que tu ajoutes)
+- Affiche les mises à jour Steam (news + events)
+- Filtre par nom / AppID, favoris, ou jeux **cachés** (plus dans le fil)
+- Notes de bugs locales + lien Discussions Steam
+- Statut Steam / Downdetector si tu penses que c’est down
+- Français | English
 
 ## Sur ton PC
 
+Extrais `GameChangelog.zip`, lance `GameChangelog.exe` (garde tout le dossier ensemble).
+
 | Quoi | Où |
 |------|-----|
-| **App** | Extrais `GameChangelog.zip`, lance `GameChangelog.exe` (garde le contenu du zip ensemble) |
-| Données | `%LOCALAPPDATA%\ChangeLog-Central\` (watchlist, cache, bugs) |
-| Préférences | `%LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json` (partagé — langue, vérif. maj) |
+| L’app | Le dossier où tu as extrait le zip |
+| Tes jeux, cache, bugs | `%LOCALAPPDATA%\ChangeLog-Central\` |
+| Langue et vérif. de version | `%LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json` *(partagé avec d’autres apps Mr-Aurevo-X — ne l’efface pas si tu les utilises encore)* |
 
-[Télécharger la release](https://github.com/Mr-Aurevo-X/GameChangelog/releases) · **v1.0.2**
+[Télécharger](https://github.com/Mr-Aurevo-X/GameChangelog/releases) · **v1.0.3**
 
-## Lancer
+## Premier lancement
 
-1. Télécharge le zip sur la page Releases ci-dessus  
-2. Extrais où tu veux  
-3. Lance `GameChangelog.exe`
+1. Télécharge le zip, extrais, lance `GameChangelog.exe`
+2. Si Steam est installé et déjà ouvert une fois : tes jeux se remplissent tout seuls, puis les noms et les patch notes
+3. Sinon : **Sync Steam**, ou cherche un jeu en haut, ou entre un AppID (ex. `570`) — pas besoin que le jeu soit installé
 
-Dev (Python) : `Lancer.cmd` à la racine du clone.
+Windows peut afficher un avertissement : le fichier n’est **pas signé**. C’est SmartScreen, pas un verdict « virus ».
 
-Windows peut afficher un avertissement : les binaires ne sont **pas signés**. C’est **SmartScreen**, pas un antivirus qui dit « virus ».
+## Mises à jour de l’app
 
-## Mises à jour
+Dans **À propos**, tu peux activer une vérif. de nouvelle version sur GitHub (lecture seule). **Rien ne se télécharge tout seul.** Tu prends le zip sur la page Releases si tu veux.
 
-Même contrat que les hubs / SoftTunes : lecture **Latest** GitHub optionnelle, **pas** de téléchargement ni d’install in-app. Toggle dans À propos (`checkGithubUpdates`).
-
-## SteamDB
-
-[SteamDB](https://steamdb.info/) n’expose **pas** d’API publique. L’app lit les **API Steam** (News + Events). Un bouton ouvre la page patch notes SteamDB dans le navigateur — consultation manuelle seulement.
-
-## Version officielle uniquement
-
-La seule version que je cautionne :
+## Seule version que je cautionne
 
 **https://github.com/Mr-Aurevo-X/GameChangelog**
 
-Un fork ou une copie modifiée ailleurs **n’est pas** ma version — je n’en suis pas responsable.  
-Logiciel **tel quel**, sans garantie — détails dans `LICENSE`, `CGU.md` et `PRIVACY.md`.
+Un fork ou une copie ailleurs n’est pas ma version. Logiciel tel quel, sans garantie — voir `LICENSE` et `PRIVACY.md`.
 
 ## Soutien (optionnel)
 

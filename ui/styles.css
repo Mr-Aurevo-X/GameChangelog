@@ -237,6 +237,20 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
   margin-bottom: 14px;
 }
 
+.sidebar-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.hidden-pill {
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  font-size: 0.74rem;
+}
+
 .sidebar-head h2,
 .panel-head h2 {
   margin: 0;
@@ -266,6 +280,27 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
   margin: 8px 0 0;
   font-size: 0.78rem;
   line-height: 1.35;
+}
+
+.watchlist-filter-field {
+  margin-bottom: 10px;
+}
+
+.watchlist-filter-field input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font: inherit;
+}
+
+.watchlist-filter-field input:focus {
+  outline: none;
+  border-color: rgba(224, 53, 69, 0.55);
+  box-shadow: 0 0 0 4px var(--accent-soft, rgba(224, 53, 69, 0.12));
 }
 
 .pill {
@@ -506,7 +541,7 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
 
 .game-item {
   display: grid;
-  grid-template-columns: 40px 1fr auto auto;
+  grid-template-columns: 40px 1fr auto auto auto;
   gap: 10px;
   align-items: center;
   width: 100%;
@@ -529,6 +564,10 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
 .game-item.active {
   border-color: rgba(224, 53, 69, 0.45);
   background: var(--accent-soft, rgba(224, 53, 69, 0.08));
+}
+
+.game-item.is-hidden {
+  opacity: 0.72;
 }
 
 .game-item img {
@@ -563,6 +602,23 @@ body.frameless:not(.pcd-embed) .tab-panel.active {
 .game-remove:hover {
   color: var(--danger);
   background: rgba(255, 93, 122, 0.08);
+}
+
+.hide-btn {
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.hide-btn:hover {
+  color: var(--text);
+  background: var(--accent-soft, rgba(224, 53, 69, 0.1));
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent, #e03545) 18%, transparent);
 }
 
 .main {
