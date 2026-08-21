@@ -16,10 +16,10 @@
   <div id="loadingOverlay" class="loading-overlay" hidden>
     <div class="loading-card">
       <div class="spinner" aria-hidden="true"></div>
-      <h2>Chargement des changelogs</h2>
-      <p id="loadingText">Préparation…</p>
+      <h2 data-i18n="loadingTitle">Chargement des changelogs</h2>
+      <p id="loadingText" data-i18n="loadingPrep">Préparation…</p>
       <div class="progress-track"><div id="loadingBar" class="progress-bar"></div></div>
-      <button id="skipLoadingBtn" type="button" class="btn ghost skip-btn">Passer / utiliser l’app</button>
+      <button id="skipLoadingBtn" type="button" class="btn ghost skip-btn" data-i18n="loadingSkip">Passer / utiliser l’app</button>
     </div>
   </div>
 
@@ -29,52 +29,80 @@
       <div class="brand">
         <div class="brand-icon" aria-hidden="true">GC</div>
         <div>
-          <h1>Game Changelog</h1>
-          <p>Patch notes · favoris · bugs · statut</p>
+          <h1>GameChangelog</h1>
+          <p data-i18n="brandTagline">Patch notes · favoris · bugs · statut</p>
         </div>
       </div>
       <div class="search-wrap">
-        <input id="searchInput" type="search" placeholder="Rechercher sur le Steam Store (sans l'avoir dans la lib)…" autocomplete="off" />
+        <input id="searchInput" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="Rechercher sur le Steam Store (sans l'avoir dans la lib)…" autocomplete="off" />
         <div id="searchResults" class="search-results" hidden></div>
       </div>
-      <div class="top-actions">
-        <label class="filter-toggle">
-          <input id="patchOnlyToggle" type="checkbox" />
-          <span>Patch notes</span>
-        </label>
-        <label class="filter-toggle">
-          <input id="favoritesOnlyToggle" type="checkbox" />
-          <span>Favoris seul.</span>
-        </label>
-        <button id="syncLibraryBtn" type="button" class="btn ghost">Sync Steam</button>
-        <button id="refreshBtn" type="button" class="btn accent">Actualiser</button>
+      <div class="top-right">
+        <div class="top-actions">
+          <label class="filter-toggle">
+            <input id="patchOnlyToggle" type="checkbox" />
+            <span data-i18n="filterPatch">Patch notes</span>
+          </label>
+          <label class="filter-toggle">
+            <input id="favoritesOnlyToggle" type="checkbox" />
+            <span data-i18n="filterFavorites">Favoris seul.</span>
+          </label>
+          <button id="syncLibraryBtn" type="button" class="btn ghost" data-i18n="btnSyncSteam">Sync Steam</button>
+          <button id="refreshBtn" type="button" class="btn accent" data-i18n="btnRefresh">Actualiser</button>
+        </div>
+        <div class="top-chrome">
+          <div
+            class="hub-lang-switch"
+            id="langSwitch"
+            role="group"
+            data-i18n-aria="langSwitchAria"
+            aria-label="Langue"
+          >
+            <button type="button" class="hub-lang-seg is-active" data-lang="fr" aria-pressed="true">FR</button>
+            <button type="button" class="hub-lang-seg" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+          <div
+            class="hub-support"
+            data-i18n-aria="supportAria"
+            data-i18n-title="supportNote"
+            aria-label="Soutien optionnel"
+            title="Si le boulot te plaît, un café — sinon profite."
+          >
+            <div class="hub-support-links">
+              <button type="button" class="hub-support-btn" data-support="discord" title="Discord">Discord</button>
+              <button type="button" class="hub-support-btn" data-support="paypal" title="PayPal">PayPal</button>
+              <button type="button" class="hub-support-btn" data-support="revolut" title="Revolut">Revolut</button>
+            </div>
+          </div>
+          <button type="button" class="btn ghost" id="btnAbout" data-i18n="navAbout">À propos</button>
+        </div>
       </div>
     </header>
 
-    <nav class="tabs" aria-label="Sections">
-      <button type="button" class="tab active" data-tab="feed">Mises à jour</button>
-      <button type="button" class="tab" data-tab="bugs">Bugs</button>
-      <button type="button" class="tab" data-tab="status">Statut / Downdetector</button>
+    <nav class="tabs" data-i18n-aria="tabsAria" aria-label="Sections">
+      <button type="button" class="tab active" data-tab="feed" data-i18n="tabFeed">Mises à jour</button>
+      <button type="button" class="tab" data-tab="bugs" data-i18n="tabBugs">Bugs</button>
+      <button type="button" class="tab" data-tab="status" data-i18n="tabStatus">Statut / Downdetector</button>
     </nav>
 
     <div class="layout">
       <aside class="sidebar">
         <div class="sidebar-head">
-          <h2>Mes jeux</h2>
+          <h2 data-i18n="myGames">Mes jeux</h2>
           <span id="gameCount" class="pill">0</span>
         </div>
         <form id="addAppIdForm" class="add-appid-form">
           <label class="field add-appid-field">
-            <span>Ajouter par AppID Steam</span>
+            <span data-i18n="addByAppId">Ajouter par AppID Steam</span>
             <div class="add-appid-row">
-              <input id="addAppIdInput" type="text" inputmode="numeric" pattern="[0-9]*" placeholder="ex. 570" autocomplete="off" />
-              <button type="submit" class="btn accent" id="addAppIdBtn">Ajouter</button>
+              <input id="addAppIdInput" type="text" inputmode="numeric" pattern="[0-9]*" data-i18n-placeholder="addAppIdPlaceholder" placeholder="ex. 570" autocomplete="off" />
+              <button type="submit" class="btn accent" id="addAppIdBtn" data-i18n="btnAdd">Ajouter</button>
             </div>
           </label>
-          <p class="muted add-appid-hint">Pas besoin d’avoir le jeu dans votre bibliothèque Steam.</p>
+          <p class="muted add-appid-hint" data-i18n="addAppIdHint">Pas besoin d’avoir le jeu dans votre bibliothèque Steam.</p>
         </form>
         <div id="watchlist" class="watchlist">
-          <p class="empty-hint">Recherchez un jeu ou saisissez un AppID Steam.</p>
+          <p class="empty-hint" data-i18n="emptyWatchlist">Recherchez un jeu ou saisissez un AppID Steam.</p>
         </div>
       </aside>
 
@@ -83,21 +111,21 @@
           <div class="split">
             <div class="feed-panel">
               <div class="panel-head">
-                <h2>Fil des mises à jour</h2>
+                <h2 data-i18n="feedTitle">Fil des mises à jour</h2>
                 <div class="panel-head-right">
-                  <button id="readAllBtn" type="button" class="btn ghost" title="Marquer tout comme lu">Tout lire</button>
-                  <span id="lastSync" class="muted">Sync —</span>
-                  <span id="feedCount" class="muted">0 entrées</span>
+                  <button id="readAllBtn" type="button" class="btn ghost" data-i18n="btnReadAll" data-i18n-title="btnReadAllTitle" title="Marquer tout comme lu">Tout lire</button>
+                  <span id="lastSync" class="muted" data-i18n="lastSyncDash">Sync —</span>
+                  <span id="feedCount" class="muted">0</span>
                 </div>
               </div>
               <div id="feedList" class="feed-list">
-                <p class="empty-hint">Ajoutez des jeux à votre liste pour voir leurs changelogs.</p>
+                <p class="empty-hint" data-i18n="emptyFeedList">Ajoutez des jeux à votre liste pour voir leurs changelogs.</p>
               </div>
             </div>
             <div class="detail-panel">
-              <div class="panel-head"><h2>Détail</h2></div>
+              <div class="panel-head"><h2 data-i18n="detailTitle">Détail</h2></div>
               <div id="detailEmpty" class="detail-empty">
-                <p>Sélectionnez une mise à jour pour lire le changelog complet.</p>
+                <p data-i18n="detailEmpty">Sélectionnez une mise à jour pour lire le changelog complet.</p>
               </div>
               <article id="detailView" class="detail-view" hidden>
                 <div class="detail-meta">
@@ -111,8 +139,8 @@
                 <div class="detail-actions">
                   <span id="detailSource" class="badge"></span>
                   <div class="detail-links">
-                    <button id="openSteamBtn" type="button" class="btn ghost">Ouvrir sur Steam</button>
-                    <button id="openSteamDbBtn" type="button" class="btn ghost">Voir sur SteamDB</button>
+                    <button id="openSteamBtn" type="button" class="btn ghost" data-i18n="btnOpenSteam">Ouvrir sur Steam</button>
+                    <button id="openSteamDbBtn" type="button" class="btn ghost" data-i18n="btnOpenSteamDb">Voir sur SteamDB</button>
                   </div>
                 </div>
                 <div id="detailContent" class="detail-content"></div>
@@ -124,28 +152,28 @@
         <section id="panelBugs" class="tab-panel" hidden>
           <div class="bugs-layout">
             <div class="bugs-form-panel">
-              <div class="panel-head"><h2>Nouveau rapport de bug</h2></div>
-              <p class="muted" id="bugGameHint">Sélectionnez un jeu dans la sidebar.</p>
+              <div class="panel-head"><h2 data-i18n="newBugTitle">Nouveau rapport de bug</h2></div>
+              <p class="muted" id="bugGameHint" data-i18n="bugHintSelect">Sélectionnez un jeu dans la sidebar.</p>
               <label class="field">
-                <span>Titre</span>
-                <input id="bugTitle" type="text" placeholder="Ex. Crash au lancement après patch…" />
+                <span data-i18n="bugTitleLabel">Titre</span>
+                <input id="bugTitle" type="text" data-i18n-placeholder="bugTitlePlaceholder" placeholder="Ex. Crash au lancement après patch…" />
               </label>
               <label class="field">
-                <span>Notes</span>
-                <textarea id="bugBody" rows="5" placeholder="Étapes, version, détails…"></textarea>
+                <span data-i18n="bugNotesLabel">Notes</span>
+                <textarea id="bugBody" rows="5" data-i18n-placeholder="bugNotesPlaceholder" placeholder="Étapes, version, détails…"></textarea>
               </label>
               <div class="btn-row">
-                <button id="addBugBtn" type="button" class="btn accent">Ajouter</button>
-                <button id="openBugForumBtn" type="button" class="btn ghost">Discussions Steam</button>
+                <button id="addBugBtn" type="button" class="btn accent" data-i18n="btnAddBug">Ajouter</button>
+                <button id="openBugForumBtn" type="button" class="btn ghost" data-i18n="btnSteamDiscussions">Discussions Steam</button>
               </div>
             </div>
             <div class="bugs-list-panel">
               <div class="panel-head">
-                <h2>Bugs suivis</h2>
+                <h2 data-i18n="bugsTracked">Bugs suivis</h2>
                 <span id="bugCount" class="muted">0</span>
               </div>
               <div id="bugsList" class="bugs-list">
-                <p class="empty-hint">Aucun bug enregistré.</p>
+                <p class="empty-hint" data-i18n="emptyBugs">Aucun bug enregistré.</p>
               </div>
             </div>
           </div>
@@ -155,23 +183,27 @@
           <div class="status-layout">
             <div class="status-steam-panel">
               <div class="panel-head">
-                <h2>Services Steam</h2>
-                <button id="refreshStatusBtn" type="button" class="btn ghost">Relancer le check</button>
+                <h2 data-i18n="steamServices">Services Steam</h2>
+                <button id="refreshStatusBtn" type="button" class="btn ghost" data-i18n="btnRecheck">Relancer le check</button>
+              </div>
+              <div id="ddCallout" class="dd-callout">
+                <p class="dd-callout-title" data-i18n="ddTitle">Serveurs down ?</p>
+                <p class="dd-callout-text" data-i18n="ddText">Vérifie les signalements sur Downdetector (page Steam officielle). Aucun lien inventé : page du jeu si elle est connue, sinon Steam.</p>
+                <div class="btn-row">
+                  <button id="openDdSteamBtn" type="button" class="btn accent" data-i18n="btnOpenDdSteam">Ouvrir Downdetector Steam</button>
+                  <button id="openSteamStatusBtn" type="button" class="btn ghost">steamstat.us</button>
+                </div>
               </div>
               <p id="statusOverall" class="status-overall muted">—</p>
               <div id="steamServices" class="status-grid"></div>
-              <div class="btn-row" style="margin-top:14px">
-                <button id="openSteamStatusBtn" type="button" class="btn ghost">steamstat.us</button>
-                <button id="openDdSteamBtn" type="button" class="btn ghost">Downdetector Steam</button>
-              </div>
             </div>
             <div class="status-games-panel">
               <div class="panel-head">
-                <h2>Statut par jeu</h2>
-                <span class="muted">Pages connues · sinon Steam (évite les 404)</span>
+                <h2 data-i18n="statusByGame">Statut par jeu</h2>
+                <span class="muted" data-i18n="statusByGameHint">Pages connues · sinon Steam (évite les 404)</span>
               </div>
               <div id="gameStatusList" class="game-status-list">
-                <p class="empty-hint">Chargez vos jeux pour voir les liens de statut.</p>
+                <p class="empty-hint" data-i18n="emptyStatusGames">Chargez vos jeux pour voir les liens de statut.</p>
               </div>
             </div>
           </div>
@@ -180,7 +212,50 @@
     </div>
   </div>
 
+  <dialog class="about-dialog" id="aboutDialog">
+    <form method="dialog" class="about-card">
+      <h3 data-i18n="aboutTitle">À propos — GameChangelog</h3>
+      <p data-i18n="aboutIntro">Patch notes Steam, watchlist locale, bugs et statut. Gratuit, sans compte. Les jeux suivis restent sur cette machine.</p>
+      <ul class="legal-strip" id="aboutLegalList">
+        <li data-i18n="aboutLocalFirst">100 % local-first — pas de télémétrie</li>
+        <li data-i18n="aboutOnlyGh">Seule connexion hors machine (hors Steam) : vérif. version GitHub (option ci-dessous)</li>
+        <li data-i18n="aboutNoNet">Si vérif. désactivée : zéro réseau hors actions utilisateur (recherche, sync, liens)</li>
+      </ul>
+      <label class="about-toggle">
+        <input type="checkbox" id="chkGithubUpdates" checked />
+        <span data-i18n="aboutChkUpdates">Vérifier les nouvelles versions sur GitHub</span>
+      </label>
+      <p class="about-note" id="aboutUpdateHint" data-i18n="aboutUpdateHintOn">Quand activé : un appel API GitHub au démarrage (lecture seule, pas de téléchargement).</p>
+      <div class="about-repo" data-i18n-aria="aboutRepoAria" aria-label="Dépôt GitHub">
+        <label class="about-repo-label" for="aboutRepoUrl" data-i18n="aboutRepoLabel">Repo GitHub (releases)</label>
+        <div class="about-repo-row">
+          <input type="text" id="aboutRepoUrl" class="about-repo-input" readonly
+            value="https://github.com/Mr-Aurevo-X/GameChangelog" spellcheck="false" />
+          <button type="button" class="btn accent" id="btnCopyRepo" data-i18n="btnCopy" data-i18n-title="btnCopyTitle" title="Copier l’URL">Copier</button>
+        </div>
+        <p class="about-note" id="aboutCopyHint" hidden>Lien copié.</p>
+      </div>
+      <div class="about-paths" id="aboutPaths" data-i18n-aria="aboutPathsAria" aria-label="Chemins locaux">
+        <p class="about-repo-label" data-i18n="aboutPathsLabel">Chemins locaux (désinstall / ménage)</p>
+        <p class="about-note" data-i18n="aboutPathsHint">Identifie clairement quoi supprimer. Les préférences Mr-Aurevo-X sont partagées entre apps.</p>
+        <div class="about-paths-list" id="aboutPathsList"></div>
+        <p class="about-note" id="aboutPathCopyHint" hidden>Chemin copié.</p>
+      </div>
+      <p class="muted" id="aboutVersion"></p>
+      <div class="about-legal-links" role="group" data-i18n-aria="legalAria" aria-label="Documents légaux">
+        <button type="button" class="btn ghost" data-doc="terms" data-i18n="legalTerms">CGU</button>
+        <button type="button" class="btn ghost" data-doc="privacy" data-i18n="legalPrivacy">Confidentialité</button>
+        <button type="button" class="btn ghost" data-doc="mentions" data-i18n="legalMentions">Mentions</button>
+        <button type="button" class="btn ghost" data-doc="notices" data-i18n="legalNotices">Notices</button>
+      </div>
+      <pre class="about-legal-body" id="aboutLegalBody" hidden></pre>
+      <p class="copyright" data-i18n="copyright">© 2026 Mr-Aurevo-X</p>
+      <button type="submit" class="btn accent" data-i18n="tipsClose">Fermer</button>
+    </form>
+  </dialog>
+
   <script src="vendor/pc-command-kit/components/tool-chrome.js"></script>
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

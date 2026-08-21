@@ -1,7 +1,7 @@
 # Terms of Use — Game Changelog
 
 Publisher: Mr-Aurevo-X  
-Product: Game Changelog  
+Product: Game Changelog (GameChangelog)  
 Copyright (c) 2026 Mr-Aurevo-X. All rights reserved.
 
 These terms apply to **Game Changelog** (not the PC Command hubs). The English `LICENSE` (PolyForm Noncommercial 1.0.0) is the license grant. This document adds usage rules. It is not a second license.

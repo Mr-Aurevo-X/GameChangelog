@@ -7,7 +7,7 @@
   "properties": {
     "preset": {
       "type": "string",
-      "enum": ["pc-command", "soft-glass", "neon-precision", "graphite-minimal", "amber-ops", "custom"],
+      "enum": ["void-glow", "pc-command", "soft-glass", "neon-precision", "graphite-minimal", "amber-ops", "custom"],
       "description": "Named preset id or custom when user overrides colors"
     },
     "bg": { "type": "string", "description": "CSS --bg" },

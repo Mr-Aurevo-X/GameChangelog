@@ -45,10 +45,10 @@
       bar.id = "toolTitlebar";
       bar.innerHTML =
         '<div class="tool-title pywebview-drag-region" id="toolTitleText"></div>' +
-        '<div class="win-controls" role="group" aria-label="Fenêtre">' +
-        '<button type="button" class="win-btn" id="toolWinMin" title="Réduire" aria-label="Réduire">─</button>' +
-        '<button type="button" class="win-btn" id="toolWinMax" title="Agrandir" aria-label="Agrandir">□</button>' +
-        '<button type="button" class="win-btn win-close" id="toolWinClose" title="Fermer" aria-label="Fermer">×</button>' +
+        '<div class="win-controls text" role="group" aria-label="Fenêtre">' +
+        '<button type="button" class="win-btn" id="toolWinMin" title="Réduire" aria-label="Réduire">min</button>' +
+        '<button type="button" class="win-btn" id="toolWinMax" title="Agrandir" aria-label="Agrandir">max</button>' +
+        '<button type="button" class="win-btn win-close" id="toolWinClose" title="Fermer" aria-label="Fermer">close</button>' +
         "</div>";
       document.body.insertBefore(bar, document.body.firstChild);
     }

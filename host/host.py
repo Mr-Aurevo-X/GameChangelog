@@ -22,7 +22,16 @@ from steam_library import detect_owned_games, resolve_game_names
 from status import check_steam_services, game_status_links, steam_bug_forum_url
 from steamdb import patchnotes_url
 from store import GameStore
-from release_notice import check_latest, open_release_url
+from about_support import (
+    GAMECHANGELOG_REPO,
+    about_local_paths,
+    get_update_check_pref as read_update_check_pref,
+    is_github_update_check_enabled,
+    open_support_url as open_support_url_safe,
+    set_github_update_check,
+    set_suite_language as write_suite_language,
+)
+from release_notice import check_latest, open_release_url, read_local_version
 from window_chrome import WindowChromeMixin, create_tool_window
 
 APP_TITLE = "Game Changelog"
@@ -65,9 +74,9 @@ def localappdata_root() -> Path:
 def _settings_paths() -> list[Path]:
     root = localappdata_root()
     return [
+        root / "Mr-Aurevo-X" / "user-settings.json",
         root / HUB_SETTINGS_DIR / "user-settings.json",
         root / "MrAurevoX" / "user-settings.json",
-        root / "Mr-Aurevo-X" / "user-settings.json",
     ]
 
 
@@ -143,9 +152,38 @@ class Api(WindowChromeMixin):
             "accent": resolve_suite_accent(),
             "language": resolve_suite_language(),
             "app_title": APP_TITLE,
+            "version": read_local_version(app_dir()) or "",
+            "checkGithubUpdates": is_github_update_check_enabled(),
         }
 
+    def get_suite_language(self) -> dict[str, Any]:
+        return {"ok": True, "language": resolve_suite_language()}
+
+    def set_suite_language(self, language: str = "fr") -> dict[str, Any]:
+        return write_suite_language(language)
+
+    def get_update_check_pref(self) -> dict[str, Any]:
+        return read_update_check_pref()
+
+    def set_update_check_pref(self, enabled: bool = True) -> dict[str, Any]:
+        return set_github_update_check(bool(enabled))
+
+    def get_about_local_paths(self) -> dict[str, Any]:
+        return about_local_paths(app_dir())
+
+    def open_support_url(self, kind: str = "") -> dict[str, Any]:
+        return open_support_url_safe(kind)
+
     def check_latest_release(self) -> dict[str, Any]:
+        if not is_github_update_check_enabled():
+            return {
+                "ok": True,
+                "updateAvailable": False,
+                "skipped": True,
+                "checkGithubUpdates": False,
+                "local": read_local_version(app_dir()),
+                "message": None,
+            }
         return check_latest(
             app_dir(),
             source_repo="Mr-Aurevo-X/GameChangelog",
@@ -155,8 +193,7 @@ class Api(WindowChromeMixin):
     def open_release_page(self, url: str = "") -> dict[str, Any]:
         target = (url or "").strip()
         if not target:
-            info = self.check_latest_release()
-            target = str(info.get("releaseUrl") or "")
+            target = f"{GAMECHANGELOG_REPO.rstrip('/')}/releases/latest"
         return open_release_url(target)
 
     def search_games(self, query: str) -> dict[str, Any]:

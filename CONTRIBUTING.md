@@ -2,7 +2,7 @@
 
 [Français](CONTRIBUTING.md) · [English](CONTRIBUTING.en.md)
 
-Ce dépôt est une **distribution publique en lecture seule**.
+Ce dépôt est une **distribution privée en lecture seule**.
 
 Le projet est développé exclusivement par le propriétaire (**inner-source fermé**).  
 **Aucune** pull request, **aucune** issue, **aucune** contribution externe n’est demandée, souhaitée ou autorisée.

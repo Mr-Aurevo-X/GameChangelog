@@ -154,6 +154,19 @@ body.pcd-embed .tool-resize-edges {
   transition: background .12s ease, color .12s ease;
 }
 
+/* Void Glow / Filament — text controls (min · max · close), not glyph ─ □ × */
+.tool-titlebar .win-controls.text .win-btn {
+  width: auto;
+  min-width: 0;
+  padding: 0 0.5rem;
+  border-radius: 8px;
+  font-family: var(--mono, "JetBrains Mono", ui-monospace, monospace);
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .tool-titlebar .win-btn:hover {
   background: rgba(255, 255, 255, .08);
   color: #fff;
