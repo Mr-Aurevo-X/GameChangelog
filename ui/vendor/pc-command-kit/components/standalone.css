@@ -1,23 +1,27 @@
 /* Standalone tool windows — PC Command chrome (when NOT ?embed=1).
  * Synced via scripts/sync-ui-kit.ps1 into ui/vendor/pc-command-kit/components/.
+ * Default look = Void Glow (tokens from base.css / presets).
  */
 
 body:not(.pcd-embed) {
   --sidebar: 240px;
+  --sidebar-collapsed: 64px;
   --tool-titlebar-h: 40px;
   color-scheme: dark;
-  background-color: #06070c;
+  background-color: var(--bg, #030304);
   background-image:
-    radial-gradient(1100px 620px at 8% -8%, rgba(224, 53, 69, .28), transparent 55%),
-    radial-gradient(900px 520px at 95% 5%, rgba(62, 199, 255, .14), transparent 50%),
-    radial-gradient(800px 480px at 55% 110%, rgba(240, 163, 58, .1), transparent 55%),
-    linear-gradient(165deg, #0c1018 0%, #06070c 45%, #0a0c12 100%);
+    radial-gradient(1100px 620px at 8% -8%, color-mix(in srgb, var(--accent, #e03545) 28%, transparent), transparent 55%),
+    radial-gradient(900px 520px at 95% 5%, color-mix(in srgb, var(--cyan, #6a9bb8) 14%, transparent), transparent 50%),
+    radial-gradient(800px 480px at 55% 110%, color-mix(in srgb, var(--warn, #e0a84a) 10%, transparent), transparent 55%),
+    linear-gradient(165deg, color-mix(in srgb, var(--panel, #0a0a0c) 80%, #12141a) 0%, var(--bg, #030304) 45%, #060608 100%);
   background-attachment: fixed;
   font-family: var(--font-ui, "Outfit", "Trebuchet MS", "Gill Sans", sans-serif);
 }
 
 /* Keep sidebar + main as two columns — media queries that collapse to 1fr
- * made narrow windows look "sidebar-only" with main crushed below the fold. */
+ * made narrow windows look "sidebar-only" with main crushed below the fold.
+ * Always keep minmax(0,1fr) so resize never clips the main pane.
+ * Hubs use --hub-sidebar-w; standalones use --sidebar — never override hubs with 240px. */
 body:not(.pcd-embed) .shell,
 body:not(.pcd-embed) .app-shell {
   grid-template-columns: var(--sidebar, 240px) minmax(0, 1fr) !important;
@@ -26,16 +30,34 @@ body:not(.pcd-embed) .app-shell {
   box-sizing: border-box;
 }
 
+body:not(.pcd-embed) .hub-shell {
+  grid-template-columns: var(--hub-sidebar-w, 232px) minmax(0, 1fr) !important;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Collapsible left panel (hubs + any shell that toggles is-collapsed) */
+body:not(.pcd-embed) .shell.is-collapsed,
+body:not(.pcd-embed) .app-shell.is-collapsed {
+  --sidebar: var(--sidebar-collapsed, 64px);
+  grid-template-columns: var(--sidebar) minmax(0, 1fr) !important;
+}
+
+body:not(.pcd-embed) .hub-shell.is-collapsed {
+  grid-template-columns: var(--hub-sidebar-w, 64px) minmax(0, 1fr) !important;
+}
+
 body:not(.pcd-embed)::before {
   content: "";
   pointer-events: none;
   position: fixed;
   inset: 0;
   z-index: 0;
-  opacity: .28;
+  opacity: .22;
   background-image:
-    linear-gradient(rgba(224, 53, 69, .035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(62, 199, 255, .025) 1px, transparent 1px);
+    linear-gradient(color-mix(in srgb, var(--accent, #e03545) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--cyan, #6a9bb8) 3%, transparent) 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at 50% 30%, #000 20%, transparent 75%);
 }
@@ -49,17 +71,17 @@ body:not(.pcd-embed) > *:not(.matrix-boot):not(.hub-resize-edges):not(.tool-resi
 
 body:not(.pcd-embed) .bg {
   background:
-    radial-gradient(ellipse 75% 48% at 8% -8%, rgba(224, 53, 69, .18), transparent 55%),
-    radial-gradient(ellipse 50% 40% at 95% 0%, rgba(62, 199, 255, .1), transparent 50%),
-    linear-gradient(180deg, #06070c 0%, #04050a 100%) !important;
+    radial-gradient(ellipse 75% 48% at 8% -8%, color-mix(in srgb, var(--accent, #e03545) 18%, transparent), transparent 55%),
+    radial-gradient(ellipse 50% 40% at 95% 0%, color-mix(in srgb, var(--cyan, #6a9bb8) 10%, transparent), transparent 50%),
+    linear-gradient(180deg, var(--bg, #030304) 0%, #020203 100%) !important;
 }
 
 body:not(.pcd-embed) .shell .sidebar,
 body:not(.pcd-embed) aside.sidebar,
 body:not(.pcd-embed) .app-sidebar {
-  background: rgba(10, 12, 18, .9) !important;
-  border-right: 1px solid rgba(255, 255, 255, .08);
-  box-shadow: inset -1px 0 0 rgba(224, 53, 69, .1);
+  background: color-mix(in srgb, var(--bg, #030304) 88%, transparent) !important;
+  border-right: 1px solid var(--line, rgba(255, 255, 255, .06));
+  box-shadow: inset -1px 0 0 color-mix(in srgb, var(--accent, #e03545) 12%, transparent);
   backdrop-filter: blur(14px);
   padding-left: 16px !important;
   padding-right: 14px !important;
@@ -77,19 +99,35 @@ body:not(.pcd-embed) .app-sidebar .nav {
 
 body:not(.pcd-embed) .shell .main,
 body:not(.pcd-embed) .app-main,
-body:not(.pcd-embed) .main {
+body:not(.pcd-embed) .main,
+body:not(.pcd-embed) .hub-main {
   min-width: 0 !important;
 }
 
 body:not(.pcd-embed) .panel,
 body:not(.pcd-embed) .card,
 body:not(.pcd-embed) .surface {
-  background: linear-gradient(165deg, rgba(14, 17, 24, .96), rgba(10, 12, 18, .98));
-  border: 1px solid rgba(255, 255, 255, .08);
+  background: linear-gradient(165deg, color-mix(in srgb, var(--panel2, #101012) 96%, transparent), color-mix(in srgb, var(--panel, #0a0a0c) 98%, transparent));
+  border: 1px solid var(--line, rgba(255, 255, 255, .06));
   box-shadow:
     0 1px 0 rgba(255, 255, 255, .04) inset,
-    0 12px 28px rgba(0, 0, 0, .45),
-    0 0 20px rgba(224, 53, 69, .05);
+    0 12px 28px rgba(0, 0, 0, .55),
+    0 0 22px color-mix(in srgb, var(--accent, #e03545) 8%, transparent);
+}
+
+/* Void Glow — glow only, zero lift */
+body.theme-void-glow:not(.pcd-embed) .btn.accent:hover,
+body.theme-void-glow:not(.pcd-embed) button.accent:hover,
+body.theme-void-glow:not(.pcd-embed) .btn.primary:hover,
+body.theme-void-glow:not(.pcd-embed) .btn-primary:hover,
+body.theme-void-glow:not(.pcd-embed) .pcd-btn.primary:hover,
+html[data-preset="void-glow"] body:not(.pcd-embed) .btn.primary:hover {
+  transform: none;
+  background: #c42d3b;
+  color: #fff;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, .12),
+    0 0 48px color-mix(in srgb, var(--accent, #e03545) 55%, transparent);
 }
 
 body:not(.pcd-embed) .btn.accent,
@@ -97,10 +135,10 @@ body:not(.pcd-embed) button.accent,
 body:not(.pcd-embed) .btn.primary,
 body:not(.pcd-embed) .btn-primary,
 body:not(.pcd-embed) .pcd-btn.primary {
-  background: #e03545;
-  border-color: rgba(224, 53, 69, .75);
+  background: var(--accent, #e03545);
+  border-color: color-mix(in srgb, var(--accent, #e03545) 75%, transparent);
   color: #fff;
-  box-shadow: 0 0 18px rgba(224, 53, 69, .28);
+  box-shadow: var(--glow-red, 0 0 22px rgba(224, 53, 69, .42));
 }
 body:not(.pcd-embed) .btn.accent:hover,
 body:not(.pcd-embed) button.accent:hover,
@@ -118,5 +156,5 @@ body:not(.pcd-embed) .brand-text h1 {
 
 body:not(.pcd-embed) .copyright,
 body:not(.pcd-embed) .privacy-note {
-  color: #8490a6;
+  color: var(--muted, #8b94a6);
 }

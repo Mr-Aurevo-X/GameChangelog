@@ -40,6 +40,44 @@ body.frameless:not(.pcd-embed) {
   box-sizing: border-box;
 }
 
+/* Void Glow — title bar minimale, glow only, lightbar 10s */
+body.theme-void-glow .tool-titlebar,
+html[data-preset="void-glow"] .tool-titlebar {
+  background: rgba(3, 3, 4, .92);
+  border-bottom-color: rgba(255, 255, 255, .06);
+  box-shadow: none;
+}
+body.theme-void-glow .tool-titlebar::after,
+html[data-preset="void-glow"] .tool-titlebar::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  bottom: 0;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    110deg,
+    transparent,
+    var(--accent, #e03545),
+    var(--cyan, #6a9bb8),
+    var(--accent, #e03545),
+    transparent
+  );
+  background-size: 220% 100%;
+  animation: pcd-void-flow 10s linear infinite;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent, #e03545) 55%, transparent);
+}
+@keyframes pcd-void-flow {
+  to { background-position: 220% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.theme-void-glow .tool-titlebar::after,
+  html[data-preset="void-glow"] .tool-titlebar::after {
+    animation: none;
+  }
+}
+
 body.frameless:not(.pcd-embed) .tool-titlebar {
   display: flex;
 }

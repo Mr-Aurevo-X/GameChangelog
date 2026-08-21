@@ -72,6 +72,21 @@
       warn: "#e8b04a",
       glowAccent: "0 0 12px rgba(224, 69, 85, .18)",
       glowCyan: "0 0 10px rgba(94, 200, 232, .14)"
+    },
+    "void-glow": {
+      preset: "void-glow",
+      label: "Void Glow",
+      bg: "#030304",
+      panel: "#0a0a0c",
+      panel2: "#101012",
+      text: "#eef1f6",
+      muted: "#8b94a6",
+      accent: "#e03545",
+      cyan: "#6a9bb8",
+      ok: "#3dd68c",
+      warn: "#e0a84a",
+      glowAccent: "0 0 22px rgba(224, 53, 69, .42)",
+      glowCyan: "0 0 16px rgba(106, 155, 184, .28)"
     }
   };
 
@@ -94,7 +109,7 @@
     const doc = targetDoc || document;
     const root = doc.documentElement;
     if (!root) return;
-    const preset = theme.preset || "pc-command";
+    const preset = theme.preset || "void-glow";
     const merged =
       preset !== "custom" && PRESETS[preset]
         ? Object.assign({}, PRESETS[preset], theme, { preset: preset })
@@ -103,6 +118,7 @@
     root.setAttribute("data-preset", preset === "custom" ? "custom" : preset);
     if (doc.body) {
       doc.body.classList.remove(
+        "theme-void-glow",
         "theme-pc-command",
         "theme-soft-glass",
         "theme-neon-precision",
@@ -162,13 +178,14 @@
     if (!el) return null;
     const o = opts || {};
     const presets = o.presets || [
+      { id: "void-glow", label: "Void Glow" },
       { id: "pc-command", label: "PC Command" },
       { id: "soft-glass", label: "Soft Glass" },
       { id: "neon-precision", label: "Neon Precision" },
       { id: "graphite-minimal", label: "Graphite Minimal" },
       { id: "amber-ops", label: "Amber Ops" },
     ];
-    let state = Object.assign({}, PRESETS["pc-command"], o.initial || {});
+    let state = Object.assign({}, PRESETS["void-glow"] || PRESETS["pc-command"], o.initial || {});
 
     el.classList.add("pcd-settings");
     el.innerHTML = `
@@ -224,7 +241,7 @@
       if (typeof o.onSave === "function") o.onSave(Object.assign({}, state));
     });
     el.querySelector("#pcdThemeReset").addEventListener("click", () => {
-      state = Object.assign({}, o.defaultTheme || PRESETS["pc-command"]);
+      state = Object.assign({}, o.defaultTheme || PRESETS["void-glow"] || PRESETS["pc-command"]);
       applyTheme(state);
       render();
       if (typeof o.onReset === "function") o.onReset(Object.assign({}, state));

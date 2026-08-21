@@ -1,0 +1,15 @@
+{
+  "preset": "void-glow",
+  "label": "Void Glow",
+  "bg": "#030304",
+  "panel": "#0a0a0c",
+  "panel2": "#101012",
+  "text": "#eef1f6",
+  "muted": "#8b94a6",
+  "accent": "#e03545",
+  "cyan": "#6a9bb8",
+  "ok": "#3dd68c",
+  "warn": "#e0a84a",
+  "glowAccent": "0 0 22px rgba(224, 53, 69, .42)",
+  "glowCyan": "0 0 16px rgba(106, 155, 184, .28)"
+}

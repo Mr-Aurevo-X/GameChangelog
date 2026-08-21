@@ -1,6 +1,6 @@
 ﻿{
-    "version":  "1.1.6",
-    "defaultPreset":  "pc-command",
+    "version":  "1.2.0",
+    "defaultPreset":  "void-glow",
     "colorKeys":  [
                       "bg",
                       "panel",
@@ -16,13 +16,14 @@
                      "glowAccent",
                      "glowCyan"
                  ],
-    "applyTheme":  "components/settings-panel.js applyTheme(theme, targetDoc)",
+    "applyTheme":  "components/settings-panel.js -\u003e applyTheme(theme, targetDoc)",
     "presets":  [
                     "amber-ops",
                     "graphite-minimal",
                     "neon-precision",
                     "pc-command",
-                    "soft-glass"
+                    "soft-glass",
+                    "void-glow"
                 ]
 }
 

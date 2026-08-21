@@ -70,3 +70,22 @@ body.theme-amber-ops {
   --glow-red: 0 0 16px rgba(224, 53, 69, .26);
   --glow-cyan: 0 0 14px rgba(232, 165, 75, .22);
 }
+
+html[data-preset="void-glow"],
+body.theme-void-glow {
+  --bg: #030304;
+  --panel: #0a0a0c;
+  --panel2: #101012;
+  --text: #eef1f6;
+  --muted: #8b94a6;
+  --accent: #e03545;
+  --accent-soft: rgba(224, 53, 69, .16);
+  --cyan: #6a9bb8;
+  --cyan-soft: rgba(106, 155, 184, .12);
+  --ok: #3dd68c;
+  --warn: #e0a84a;
+  --line: rgba(255, 255, 255, .06);
+  --glow-red: 0 0 22px rgba(224, 53, 69, .42);
+  --glow-cyan: 0 0 16px rgba(106, 155, 184, .28);
+  --radius: 10px;
+}
