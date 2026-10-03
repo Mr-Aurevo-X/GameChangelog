@@ -28,6 +28,8 @@ from about_support import (
     get_update_check_pref as read_update_check_pref,
     is_github_update_check_enabled,
     open_support_url as open_support_url_safe,
+    list_crypto_donations as list_crypto_donations_safe,
+    copy_crypto_address as copy_crypto_address_safe,
     set_github_update_check,
     set_suite_language as write_suite_language,
 )
@@ -170,6 +172,12 @@ class Api(WindowChromeMixin):
 
     def get_about_local_paths(self) -> dict[str, Any]:
         return about_local_paths(app_dir())
+
+    def list_crypto_donations(self) -> dict:
+        return list_crypto_donations_safe()
+
+    def copy_crypto_address(self, asset_id: str = "") -> dict:
+        return copy_crypto_address_safe(asset_id)
 
     def open_support_url(self, kind: str = "") -> dict[str, Any]:
         return open_support_url_safe(kind)
