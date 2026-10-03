@@ -5,6 +5,8 @@
 """GameChangelog About helpers — support URLs, update opt-out, labeled local paths."""
 from __future__ import annotations
 
+import hub_update
+
 import json
 import os
 import sys
@@ -14,17 +16,8 @@ from typing import Any
 
 SUPPORT_URLS: dict[str, str] = {
     "discord": "https://discord.com/users/406891052516114442",
-    "paypal": "https://www.paypal.com/paypalme/aurevo1",
-    "revolut": "https://revolut.me/mr_aurevo_x",
 }
-_ALLOWED_SUPPORT_HOSTS = frozenset(
-    {
-        "discord.com",
-        "www.paypal.com",
-        "paypal.com",
-        "revolut.me",
-    }
-)
+_ALLOWED_SUPPORT_HOSTS = frozenset({"discord.com"})
 
 GAMECHANGELOG_REPO = "https://github.com/Mr-Aurevo-X/GameChangelog"
 DATA_DIR_NAME = "ChangeLog-Central"
@@ -131,6 +124,15 @@ def open_support_url(kind: str) -> dict[str, Any]:
         return {"ok": True, "kind": key, "url": url}
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "error": str(exc), "url": url}
+
+
+
+def list_crypto_donations() -> dict[str, Any]:
+    return hub_update.list_crypto_donations()
+
+
+def copy_crypto_address(asset_id: str) -> dict[str, Any]:
+    return hub_update.copy_crypto_address(asset_id)
 
 
 def _resolve_install_dir() -> Path | None:

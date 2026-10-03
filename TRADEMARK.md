@@ -11,7 +11,7 @@ The following are reserved to Mr-Aurevo-X:
 - **Mr-Aurevo-X**
 - **PC Command**
 - Product names of the official hubs and standalones (Hub Système / Network / Security / Utilities, Opti, GameChangelog, vitrine apps)
-- Official logos, icons (`brand-icon`, app marks), and the in-app support buttons (Discord / PayPal / Revolut)
+- Official logos, icons (`brand-icon`, app marks), and the in-app support buttons (Discord / dons crypto)
 
 ## Permitted non-commercial forks
 

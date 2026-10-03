@@ -12,7 +12,7 @@ Outbound network (when it happens):
 - Steam APIs you trigger (store search, news, events, names, server status)
 - **Optional** read-only GitHub **Latest release** check (opt-out in About)
 - Browser opens you start: Steam / SteamDB / Downdetector / Releases
-- Support links (Discord / PayPal / Revolut) only when you click
+- Support links (Discord / dons crypto) only when you click
 
 Official builds: only Releases on **https://github.com/Mr-Aurevo-X/GameChangelog** (`GameChangelog.zip`).  
 Forks / modified copies are **not** covered by this policy.

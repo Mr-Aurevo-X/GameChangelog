@@ -1,27 +1,30 @@
-# Confidentialité — Game Changelog
-
-Éditeur : Mr-Aurevo-X · Produit : Game Changelog  
+Politique de confidentialité / RGPD — PC Command / Suite Mr-Aurevo-X
+Éditeur : Mr-Aurevo-X · Produit : GameChangelog
 Copyright © 2026 Mr-Aurevo-X. Tous droits réservés.
 
-## 1. Collecte par l’éditeur : aucune
+1. Collecte par l’éditeur : aucune
+Mr-Aurevo-X ne collecte pas de données personnelles sur ses serveurs. Pas de tracker analytics, pas de télémétrie crash, pas de compte utilisateur, pas de minage d’usage en arrière-plan.
 
-Mr-Aurevo-X ne collecte pas de données personnelles sur ses serveurs. Pas de tracker analytics, pas de télémétrie crash, pas de compte utilisateur. La watchlist n’est pas envoyée à Mr-Aurevo-X.
+Sans collecte, traitement, stockage ni transmission vers un serveur Mr-Aurevo-X, les droits RGPD qui supposent un fichier côté éditeur (accès / effacement serveur) ne s’appliquent pas. Vous pouvez désinstaller le logiciel et supprimer les réglages locaux à tout moment.
 
-## 2. Local
+2. Architecture local-first
+Exécution locale (Python + WebView2). Préférences : dossier d’installation et/ou %LOCALAPPDATA%\Mr-Aurevo-X. Résultats : là où vous les enregistrez.
 
-Watchlist, cache changelogs, bugs et réglages app : `%LOCALAPPDATA%\ChangeLog-Central\`.
+La Suite n’est pas « 100 % locale » dans son ensemble : certains modules utilisent le réseau quand vous les utilisez. Les apps vitrine sans appel réseau peuvent l’indiquer dans leur README.
 
-Préférences partagées (langue, accent, vérif. maj) : `%LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json` — fichier commun à d’autres apps Mr-Aurevo-X. Ne l’effacez pas si d’autres programmes l’utilisent encore.
+3. Exceptions réseau (pas de télémétrie éditeur)
+- Notification de release hub : comparaison de version locale vs GitHub Latest (pas de téléchargement).
+- Trad-X : Google Translate via deep_translator — le texte quitte le PC.
+- Traffic réputation (opt-in) : URLhaus / AbuseIPDB (+ liens VirusTotal / Talos).
+- Tests NetAdmin / NetMap : hôtes que vous saisissez.
+- Métriques Accueil : 127.0.0.1 uniquement.
+- Bouton Discord : site de l’opérateur. Dons crypto : copie locale d’adresses (pas de navigation).
 
-## 3. Réseau (initié par l’usage)
+WifiKey affiche des clés déjà présentes sur le PC ; elles ne partent pas vers Mr-Aurevo-X. Presse-papiers / nettoyage / désinstall : chemins locaux que vous validez.
 
-- API Steam (recherche, news, events, statut)
-- `api.github.com` (notice de version, lecture seule, si l’option est activée dans À propos)
-- Ouverture navigateur : pages Steam / SteamDB / releases (clic utilisateur)
-- Boutons Discord / PayPal / Revolut : sites de ces opérateurs — un clic quitte l’app
+4. Liens de soutien
+Un clic Discord quitte l’app (politique Discord). Les dons crypto restent locaux (copie presse-papiers).
 
-Pas de téléchargement ni d’install in-app depuis GitHub.
-
-## 4. Contact
-
-GitHub : https://github.com/Mr-Aurevo-X/GameChangelog
+5. Contact
+GitHub : https://github.com/Mr-Aurevo-X
+Discord (facultatif) : https://discord.com/users/406891052516114442

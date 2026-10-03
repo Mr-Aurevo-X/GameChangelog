@@ -1,0 +1,85 @@
+{
+  "version": 1,
+  "source": "https://github.com/Mr-Aurevo-X#user-content-support",
+  "assets": [
+    {
+      "id": "btc",
+      "symbol": "BTC",
+      "name": "Bitcoin",
+      "network": "Bitcoin",
+      "address": "bc1ql2wj4spehf2zu40329lspr9a3thzuy9gyy4xm7"
+    },
+    {
+      "id": "eth",
+      "symbol": "ETH",
+      "name": "Ethereum",
+      "network": "Ethereum",
+      "address": "0x21daa0434976FDA8C4Ce6fA494602e734f051e21"
+    },
+    {
+      "id": "hype",
+      "symbol": "HYPE",
+      "name": "Hyperliquid",
+      "network": "Hyperliquid (EVM)",
+      "address": "0x21daa0434976FDA8C4Ce6fA494602e734f051e21",
+      "note": "same_as_eth"
+    },
+    {
+      "id": "sol",
+      "symbol": "SOL",
+      "name": "Solana",
+      "network": "Solana",
+      "address": "E1MoayFrzC6Phe4g17Qfswub8hk1ytnp8Db8qguqPdv1"
+    },
+    {
+      "id": "usdt",
+      "symbol": "USDT",
+      "name": "Tether",
+      "network": "Tron (TRC-20)",
+      "address": "TKVvKinR4Ksrs2f8AN5NuVeysmizmh42Ch"
+    },
+    {
+      "id": "usdc",
+      "symbol": "USDC",
+      "name": "USD Coin",
+      "network": "Solana",
+      "address": "E1MoayFrzC6Phe4g17Qfswub8hk1ytnp8Db8qguqPdv1",
+      "note": "same_as_sol"
+    },
+    {
+      "id": "bch",
+      "symbol": "BCH",
+      "name": "Bitcoin Cash",
+      "network": "Bitcoin Cash",
+      "address": "bitcoincash:qrdwzcg372fvahkk0rz7y8mrr0fnaw2ygg5fk6mfke"
+    },
+    {
+      "id": "ltc",
+      "symbol": "LTC",
+      "name": "Litecoin",
+      "network": "Litecoin",
+      "address": "ltc1qmnm2j2nn59ycnhk3x0t33c24fpxlxjxrxha2mj"
+    },
+    {
+      "id": "doge",
+      "symbol": "DOGE",
+      "name": "Dogecoin",
+      "network": "Dogecoin",
+      "address": "D7649yHmrYMCGcfFfoKVxyAAot45HCmAVp"
+    },
+    {
+      "id": "xrp",
+      "symbol": "XRP",
+      "name": "XRP",
+      "network": "XRP Ledger",
+      "address": "rEtVrJSb3BTANFKT2aTCS9jUahp74v3U6K"
+    },
+    {
+      "id": "xlm",
+      "symbol": "XLM",
+      "name": "Stellar",
+      "network": "Stellar",
+      "address": "GDISSPFVTPNKMVMX5OSNJBLS2DYBMP4ZTBPRSORHWXI4NJHFS5KKSBRN"
+    }
+  ]
+}

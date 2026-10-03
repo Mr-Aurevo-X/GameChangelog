@@ -1,16 +1,16 @@
-Licences / notices — Game Changelog
+Licences / notices — PC Command / Suite Mr-Aurevo-X (GameChangelog)
 
 Code Mr-Aurevo-X : PolyForm Noncommercial License 1.0.0 (`LICENSE`). Marque : `TRADEMARK.md`.
 
-Composants tiers possibles :
+Composants tiers possibles (selon l’outil) :
 - Python (PSF License)
 - pywebview
 - Microsoft Edge WebView2 Runtime
 - PyInstaller
-- Polices UI (licences des familles utilisées)
+- psutil
+- deep_translator / Google Translate (Trad-X uniquement)
+- Outfit / JetBrains Mono (licences de polices)
 
 Les licences amont s’appliquent à ces composants.
 
-Le contenu changelog affiché vient de Steam (News / Events) et reste la propriété de ses ayants droit. GameChangelog n’est pas affilié à Valve / Steam.
-
-GameChangelog est fourni sans mise à jour automatique et sans engagement de versions futures.
+Suite fournie sans mise à jour automatique et sans engagement de versions futures.

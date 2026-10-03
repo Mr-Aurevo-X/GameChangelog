@@ -9,8 +9,6 @@ The project is developed exclusively by the owner (**closed inner-source**).
 
 Any PR or issue will be **closed without review**. Please do not submit patches or bug reports here.
 
-Exception: report a **vulnerability** only via a [private advisory](https://github.com/Mr-Aurevo-X/GameChangelog/security/advisories/new) — see `SECURITY.md`.
-
 License: PolyForm Noncommercial 1.0.0 (`LICENSE`). Trademarks: `TRADEMARK.md`.
 
 ---
@@ -19,4 +17,4 @@ Dreamed by **Mr-Aurevo-X**. Cursor made the dream real.
 
 Optional support, your call:
 
-[Discord](https://discord.com/users/406891052516114442) · [PayPal](https://www.paypal.com/paypalme/aurevo1) · [Revolut](https://revolut.me/mr_aurevo_x)
+[Discord](https://discord.com/users/406891052516114442) · [Crypto tips](https://github.com/Mr-Aurevo-X#user-content-support)
