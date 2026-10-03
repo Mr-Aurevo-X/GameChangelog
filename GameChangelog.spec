@@ -1,10 +1,10 @@
-# -*- mode: python ; coding: utf-8 -*-
+﻿# -*- mode: python ; coding: utf-8 -*-
 
 a = Analysis(
     ['host\\host.py'],
     pathex=[],
     binaries=[],
-    datas=[('ui', 'ui'), ('version.json', '.')],
+    datas=[('ui', 'ui'), ('version.json', '.'), ('host/crypto_donations.json', '.')],
     hiddenimports=['release_notice', 'about_support'],
     hookspath=[],
     hooksconfig={},
