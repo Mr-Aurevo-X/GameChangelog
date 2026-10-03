@@ -26,7 +26,7 @@ Extract `GameChangelog.zip`, run `GameChangelog.exe` (keep the folder together).
 | Games, cache, bugs | `%LOCALAPPDATA%\ChangeLog-Central\` |
 | Language and update check | `%LOCALAPPDATA%\Mr-Aurevo-X\user-settings.json` *(shared with other Mr-Aurevo-X apps — don’t delete it if you still use them)* |
 
-[Download](https://github.com/Mr-Aurevo-X/GameChangelog/releases) · **v1.0.4**
+[Download](https://github.com/Mr-Aurevo-X/GameChangelog/releases) · **v1.0.5**
 
 ## First launch
 

@@ -276,6 +276,14 @@ def normalize_version(raw: str | None) -> str:
 def format_version_bracket(version: str | None) -> str:
     return normalize_version(version) or ""
 
+def _load_version_json(path: Path) -> dict[str, Any] | None:
+    """Read version.json; tolerate UTF-8 BOM (PowerShell Set-Content -Encoding utf8)."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8-sig"))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return data if isinstance(data, dict) else None
+
 def read_local_version(*search_roots: Path, pack_id: str | None = None) -> str | None:
     for root in search_roots:
         if not root:
@@ -283,9 +291,8 @@ def read_local_version(*search_roots: Path, pack_id: str | None = None) -> str |
         path = Path(root) / "version.json"
         if not path.is_file():
             continue
-        try:
-            data = json.loads(path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
+        data = _load_version_json(path)
+        if not data:
             continue
         if pack_id:
             packs = data.get("packs")
@@ -304,8 +311,8 @@ def read_local_version(*search_roots: Path, pack_id: str | None = None) -> str |
         if meipass.is_dir():
             path = meipass / "version.json"
             if path.is_file():
-                try:
-                    data = json.loads(path.read_text(encoding="utf-8"))
+                data = _load_version_json(path)
+                if data:
                     tag = str(
                         data.get("suiteVersion")
                         or data.get("tag")
@@ -314,22 +321,23 @@ def read_local_version(*search_roots: Path, pack_id: str | None = None) -> str |
                     ).strip()
                     if tag:
                         return normalize_version(tag) or tag
-                except (OSError, json.JSONDecodeError):
-                    pass
     return None
 
 def version_search_roots(app_dir: Path) -> list[Path]:
+    """Prefer exe/app dir over %LOCALAPPDATA%\\PCCommand stamp (avoids stale banner)."""
     roots: list[Path] = []
-    install = default_install_dir()
-    if install not in roots:
-        roots.append(install)
+    if getattr(sys, "frozen", False):
+        try:
+            exe_parent = Path(sys.executable).resolve().parent
+            roots.append(exe_parent)
+        except OSError:
+            pass
     ad = Path(app_dir)
     if ad not in roots:
         roots.append(ad)
-    if getattr(sys, "frozen", False):
-        exe_parent = Path(sys.executable).resolve().parent
-        if exe_parent not in roots:
-            roots.insert(0, exe_parent)
+    install = default_install_dir()
+    if install not in roots:
+        roots.append(install)
     return roots
 
 def get_local_suite_version(app_dir: Path) -> str | None:
@@ -532,7 +540,7 @@ def load_crypto_donations() -> list[dict[str, Any]]:
         if not path or not path.is_file():
             continue
         try:
-            data = json.loads(path.read_text(encoding="utf-8"))
+            data = json.loads(path.read_text(encoding="utf-8-sig"))
         except (OSError, json.JSONDecodeError):
             continue
         assets = data.get("assets") if isinstance(data, dict) else None
@@ -713,12 +721,9 @@ def write_pack_stamp(
     with _version_lock(install_dir):
         existing: dict = {}
         if path.is_file():
-            try:
-                loaded = json.loads(path.read_text(encoding="utf-8"))
-                if isinstance(loaded, dict):
-                    existing = loaded
-            except (OSError, json.JSONDecodeError):
-                existing = {}
+            loaded = _load_version_json(path)
+            if loaded:
+                existing = loaded
         suite = str((catalog or {}).get("suiteVersion") or tag or "").strip() or tag
         payload = dict(existing)
         payload["tag"] = tag
